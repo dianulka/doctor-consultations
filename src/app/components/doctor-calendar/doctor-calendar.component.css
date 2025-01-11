@@ -1,0 +1,35 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  thead th, tbody td {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .reserved {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .past {
+    background-color: #eaeaea;
+    color: #888;
+  }
+  
+  td:hover:not(.past) {
+    background-color: #e8f4fa;
+    cursor: pointer;
+  }
+  
+  td {
+    position: relative;
+  }
+  
+  div {
+    padding: 5px;
+    border-radius: 5px;
+  }
+  

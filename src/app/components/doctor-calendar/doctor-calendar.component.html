@@ -1,0 +1,35 @@
+<p>doctor-calendar works!</p>
+<div>
+    <h2>Doctor's Weekly Schedule</h2>
+    <div class="navigation">
+      <button (click)="previousWeek()">Previous Week</button>
+      <span>{{ monthDays[0] | date: 'MMM d, y' }} - {{ monthDays[6] | date: 'MMM d, y' }}</span>
+      <button (click)="nextWeek()">Next Week</button>
+    </div>
+  
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th *ngFor="let day of monthDays">
+            {{ day | date: 'EEE, MMM d' }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let time of hours">
+          <td>{{ time }}</td>
+          <td *ngFor="let day of monthDays"
+              [ngClass]="{
+                'reserved': isSlotReserved(day, time),
+                'past': isPastSlot(day, time)
+              }"
+              (click)="selectSlot(day, time)">
+            <div *ngIf="isSlotReserved(day, time)">Reserved</div>
+            <div *ngIf="!isSlotReserved(day, time)">Available</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
