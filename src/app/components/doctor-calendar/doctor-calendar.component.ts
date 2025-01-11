@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Schedule,Appointment } from '../../models/appointment';
 import { ScheduleService } from '../../services/schedule.service';
+import { Absence } from '../../models/absence';
+import { AbsenceService } from '../../services/absence.service';
 
 export enum CalendarView {
   Week = 'week',
@@ -25,31 +27,49 @@ export class DoctorCalendarComponent implements OnInit {
   public CalendarView = CalendarView;
 
   currentView: CalendarView = CalendarView.Week;
+  absences: Absence[] = [];
 
-  constructor(private scheduleService: ScheduleService) {}
+  constructor(private scheduleService: ScheduleService, private absenceService: AbsenceService) {}
 
   ngOnInit(): void {
     this.generateTimeSlots();
     this.generateView(this.currentView, this.viewDate);
     //this.loadMockSchedule(); // Mockowe dane wizyt
+    this.loadAbsences(); // Pobierz nieobecności
     this.loadAppointments();
   }
 
   appointments: Appointment[] = [];
 
 
+  // loadAppointments(): void {
+  //   // console.log('Load all appointments');
+  //   // this.scheduleService.getAllApointments().subscribe((appointments) => {
+  //   //   this.appointments = appointments;
+  //   // });
+  //   // console.log('loadAppointments after:');
+  //   // this.logAppointments(this.appointments);
+  //   this.scheduleService.getSchedule().subscribe((scheduleFromService) => {
+  //     this.schedule = scheduleFromService;
+  //   })
+  //   console.log(this.schedule);
+    
+  // }
+
+
   loadAppointments(): void {
-    // console.log('Load all appointments');
-    // this.scheduleService.getAllApointments().subscribe((appointments) => {
-    //   this.appointments = appointments;
-    // });
-    // console.log('loadAppointments after:');
-    // this.logAppointments(this.appointments);
     this.scheduleService.getSchedule().subscribe((scheduleFromService) => {
       this.schedule = scheduleFromService;
-    })
-    console.log(this.schedule);
-    
+  
+      // Aktualizuj status wizyt na "canceled" w przypadku konfliktu z nieobecnością
+      Object.keys(this.schedule).forEach((date) => {
+        if (this.absences.some((absence) => absence.date === date)) {
+          this.schedule[date].forEach((appointment) => {
+            appointment.status = 'canceled';
+          });
+        }
+      });
+    });
   }
 
   logAppointments(appointments: Appointment[]): void {
@@ -114,18 +134,6 @@ export class DoctorCalendarComponent implements OnInit {
     return new Date(start.setDate(diff));
   }
 
-  // Załadowanie mockowych danych wizyt
-  // loadMockSchedule(): void {
-  //   this.schedule = {
-  //     '2025-01-12': [
-  //       { id: 1, startTime: '09:00', endTime: '09:30', type: 'Consultation', status: 'reserved', patient_id: '100', doctor_id: '100'},
-  //       { id: 2,startTime: '11:00', endTime: '11:30', type: 'Checkup', status: 'completed', patient_id: '100', doctor_id: '100' },
-  //     ],
-  //     '2025-01-13': [
-  //       { id: 0, startTime: '10:00', endTime: '10:30', type: 'Consultation', status: 'reserved', patient_id: '100', doctor_id: '100' },
-  //     ],
-  //   };
-  // }
 
   // Sprawdza, czy slot jest zarezerwowany
   isSlotReserved(day: Date, time: string): boolean {
@@ -221,6 +229,7 @@ export class DoctorCalendarComponent implements OnInit {
 
   // Obsługa najechania na slot
   onHover(day: Date, time: string): void {
+    console.log('onHover')
     const dayKey = day.toISOString().split('T')[0];
     if (this.schedule[dayKey]) {
       this.hoveredAppointment = this.schedule[dayKey].find(
@@ -237,5 +246,15 @@ export class DoctorCalendarComponent implements OnInit {
     this.hoveredAppointment = null;
   }
 
+  isAbsence(day: Date): boolean {
+    const dayKey = day.toISOString().split('T')[0];
+    return this.absences.some((absence) => absence.date === dayKey);
+  }
+  
+  loadAbsences(): void {
+    this.absenceService.getAbsences().subscribe((absences) => {
+      this.absences = absences;
+    });
+  }
   
 }

@@ -9,7 +9,12 @@ export interface Appointment {
     doctor_id: string; // ID lekarza
 }
 
+export interface DailySchedule {
+    [date: string]: Appointment[]; // Klucz: data (YYYY-MM-DD), Wartość: lista wizyt
+}
+  
+  // Harmonogram dla wszystkich lekarzy
 export interface Schedule {
-    [date: string]: Appointment[]; // Klucz: data, Wartość: tablica wizyt
+    [doctorId: string]: DailySchedule; // Klucz: ID lekarza, Wartość: DailySchedule
 }
   

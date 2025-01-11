@@ -50,3 +50,9 @@ font-weight: bold;
     z-index: 1000;
     border-radius: 4px;
 }
+
+.absence {
+    background-color: red;
+    color: white;
+}
+  

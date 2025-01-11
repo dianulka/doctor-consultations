@@ -1,0 +1,20 @@
+<div>
+    <h2>Define Absences</h2>
+  
+    <label>Date:</label>
+    <input type="date" [(ngModel)]="newAbsence.date" />
+  
+    <label>Reason (optional):</label>
+    <input type="text" [(ngModel)]="newAbsence.reason" />
+  
+    <button (click)="addAbsence()">Add Absence</button>
+  
+    <h3>Your Absences</h3>
+    <ul>
+      <li *ngFor="let absence of absences">
+        <strong>{{ absence.date }}</strong>
+        <span *ngIf="absence.reason"> - {{ absence.reason }}</span>
+      </li>
+    </ul>
+  </div>
+  

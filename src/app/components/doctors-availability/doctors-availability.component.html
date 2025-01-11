@@ -1,0 +1,84 @@
+<div>
+    <h2>Define Your Availability</h2>
+  
+    <!-- Typ dostępności -->
+    <label>
+      <input
+        type="radio"
+        name="availabilityType"
+        value="cyclic"
+        [(ngModel)]="newAvailability.type"
+      />
+      Cyclic
+    </label>
+    <label>
+      <input
+        type="radio"
+        name="availabilityType"
+        value="one-time"
+        [(ngModel)]="newAvailability.type"
+      />
+      One-time
+    </label>
+  
+    <!-- Zakres dat -->
+    <div *ngIf="newAvailability.type === 'cyclic'">
+      <label>Start Date:</label>
+      <input type="date" [(ngModel)]="newAvailability.startDate" />
+  
+      <label>End Date:</label>
+      <input type="date" [(ngModel)]="newAvailability.endDate" />
+  
+      <!-- Maski dni -->
+      <label>Days of Week:</label>
+      <div>
+        <label *ngFor="let day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']">
+          <input
+            type="checkbox"
+            [value]="day"
+            [(ngModel)]="newAvailability.daysOfWeek"
+          />
+          {{ day }}
+        </label>
+      </div>
+    </div>
+  
+    <!-- Przedziały czasowe -->
+    <div>
+      <h3>Time Ranges</h3>
+      <div *ngFor="let range of newAvailability.timeRanges; let i = index">
+        <label>Start:</label>
+        <input type="time" [(ngModel)]="range.start" />
+  
+        <label>End:</label>
+        <input type="time" [(ngModel)]="range.end" />
+  
+        <button (click)="removeTimeRange(i)">Remove</button>
+      </div>
+      <button (click)="addTimeRange()">Add Time Range</button>
+    </div>
+  
+    <button (click)="addAvailability()">Save Availability</button>
+  </div>
+  
+  <!-- Wyświetlenie dostępności -->
+  <div>
+    <h2>Your Availabilities</h2>
+    <div *ngFor="let availability of allAvailabilities">
+      <h3>{{ availability.type | titlecase }} Availability</h3>
+      <p><strong>Start Date:</strong> {{ availability.startDate }}</p>
+      <p *ngIf="availability.type === 'cyclic'">
+        <strong>End Date:</strong> {{ availability.endDate }}
+      </p>
+      <p *ngIf="availability.daysOfWeek">
+        <strong>Days of Week:</strong> {{ availability.daysOfWeek.join(', ') }}
+      </p>
+      <p>
+        <strong>Time Ranges:</strong>
+        <span *ngFor="let range of availability.timeRanges">
+          {{ range.start }} - {{ range.end }}
+        </span>
+      </p>
+    </div>
+  </div>
+  

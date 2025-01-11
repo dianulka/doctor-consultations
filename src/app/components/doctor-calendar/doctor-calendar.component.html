@@ -36,7 +36,8 @@
             [ngClass]="{
               'reserved': isSlotReserved(day, time),
               'past': isPastSlot(day, time),
-              'current': isCurrentSlot(day, time)
+              'current': isCurrentSlot(day, time),
+              'absence': isAbsence(day)
             }"
             (click)="selectSlot(day, time)"
             (mouseover)="onHover(day, time)"
