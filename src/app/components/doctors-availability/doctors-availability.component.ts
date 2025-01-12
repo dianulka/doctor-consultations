@@ -18,12 +18,14 @@ import { FormsModule, NgModel } from '@angular/forms';
 export class DoctorsAvailabilityComponent {
   currentView: 'cyclic' | 'one-time' = 'cyclic';
 
+  doctor_id:string = '0';
   newAvailability: Availability = {
     type: this.currentView,
     startDate: '',
     endDate: '',
     daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     timeRanges: [],
+    doctor_id: this.doctor_id
   };
   allAvailabilities: Availability[] = [];
   availableTimes: string[] = []; // Lista dostępnych godzin
@@ -69,6 +71,7 @@ export class DoctorsAvailabilityComponent {
       endDate: '',
       daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       timeRanges: [],
+      doctor_id: this.doctor_id
     };
   }
 

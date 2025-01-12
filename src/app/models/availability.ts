@@ -5,5 +5,6 @@ export interface Availability {
     endDate?: string; // Format YYYY-MM-DD (dla cyklicznej dostępności)
     daysOfWeek?: string[]; // Maski dni np. ['Mon', 'Tue', 'Thu', 'Sat']
     timeRanges: { start: string; end: string }[]; // Przedziały czasowe
+    doctor_id: string; // ID lekarza
 }
   

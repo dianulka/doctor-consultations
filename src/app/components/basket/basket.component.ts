@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './basket.component.css'
 })
 export class BasketComponent implements OnInit{
-  patient_id: string = '101'; // Identyfikator pacjenta
+  patient_id: string = '100'; // Identyfikator pacjenta
   patientAppointements: Appointment[] = []; // Lista wizyt pacjenta
   paymentSuccess: boolean = false; // Flaga dla sukcesu płatności
 
@@ -28,6 +28,7 @@ export class BasketComponent implements OnInit{
   }
 
   // Usuwanie wizyty
+  // do wywalenia
   removeAppointment(appointmentId: number, date: string): void {
     this.scheduleService.removeAppointment(this.patient_id, date, appointmentId).subscribe((success) => {
       if (success) {
@@ -42,7 +43,7 @@ export class BasketComponent implements OnInit{
       this.paymentSuccess = true;
       setTimeout(() => {
         this.paymentSuccess = false; // Reset komunikatu po 3 sekundach
-      }, 3000);
+      }, 10000);
     }
   }
 

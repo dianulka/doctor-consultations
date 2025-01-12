@@ -27,6 +27,7 @@ export class AvailabilityService {
         { start: '13:00', end: '13:30' },
         { start: '13:30', end: '14:00' },
       ],
+      doctor_id: '0'
     },
     {
       id: 0,
@@ -45,6 +46,7 @@ export class AvailabilityService {
         { start: '13:00', end: '13:30' },
         { start: '13:30', end: '14:00' },
       ],
+      doctor_id: '0'
     },
     {
       id: 2,
@@ -63,6 +65,7 @@ export class AvailabilityService {
         { start: '13:00', end: '13:30' },
         { start: '13:30', end: '14:00' },
       ],
+      doctor_id: '0'
     },
 
     // {
