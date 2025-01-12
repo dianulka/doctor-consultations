@@ -1,0 +1,54 @@
+<div class="navigation">
+    <!-- Obsługa Previous -->
+    <button (click)="previous()">
+      {{ currentView === 'week' ? 'Previous Week' : 'Previous Day' }}
+    </button>
+  
+    <!-- Nagłówek widoku -->
+    <span *ngIf="currentView === 'week'">
+      {{ monthDays[0] | date: 'MMM d, y' }} - {{ monthDays[6] | date: 'MMM d, y' }}
+    </span>
+    <span *ngIf="currentView === 'day'">
+      {{ viewDate | date: 'EEE, MMM d, y' }}
+    </span>
+  
+    <!-- Obsługa Next -->
+    <button (click)="next()">
+      {{ currentView === 'week' ? 'Next Week' : 'Next Day' }}
+    </button>
+  
+    <!-- Przyciski przełączania widoków -->
+    <button (click)="switchToView(CalendarView.Week)">Week View</button>
+    <button (click)="switchToView(CalendarView.Day)">Day View</button>
+  </div>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th *ngFor="let day of monthDays">{{ day | date: 'EEE, MMM d' }}
+          <p>{{ countAppointments(day) }} appointments</p>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let time of hours">
+        <td>{{ time }}</td>
+        <td *ngFor="let day of monthDays"
+            [ngClass]="{
+              'reserved': isSlotReserved(day, time) && isAvailable(day, time),
+              'past': isPastSlot(day, time),
+              'current': isCurrentSlot(day, time),
+              'absence': isAbsence(day)
+            }"
+            (click)="selectSlot(day, time)"
+            (mouseover)="onHover(day, time)"
+            (mouseleave)="onLeave()">
+          <div *ngIf="isSlotReserved(day, time) && isAvailable(day, time)">Reserved</div>
+          <div *ngIf="isAvailable(day, time) && !isSlotReserved(day, time) && !isAbsence(day)">Available</div>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+ 
