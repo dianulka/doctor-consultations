@@ -26,7 +26,9 @@
     <thead>
       <tr>
         <th>Time</th>
-        <th *ngFor="let day of monthDays">{{ day | date: 'EEE, MMM d' }}</th>
+        <th *ngFor="let day of monthDays">{{ day | date: 'EEE, MMM d' }}
+          <p>{{ countAppointments(day) }} appointments</p>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -34,7 +36,7 @@
         <td>{{ time }}</td>
         <td *ngFor="let day of monthDays"
             [ngClass]="{
-              'reserved': isSlotReserved(day, time),
+              'reserved': isSlotReserved(day, time) && isAvailable(day, time),
               'past': isPastSlot(day, time),
               'current': isCurrentSlot(day, time),
               'absence': isAbsence(day)
@@ -42,8 +44,9 @@
             (click)="selectSlot(day, time)"
             (mouseover)="onHover(day, time)"
             (mouseleave)="onLeave()">
-          <div *ngIf="isSlotReserved(day, time)">Reserved</div>
-          <div *ngIf="!isSlotReserved(day, time)">Available</div>
+          <div *ngIf="isSlotReserved(day, time) && isAvailable(day, time)">Reserved</div>
+          <div *ngIf="isAvailable(day, time) && !isSlotReserved(day, time) && !isAbsence(day)">Available</div>
+          
         </td>
       </tr>
     </tbody>

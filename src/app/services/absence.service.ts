@@ -34,6 +34,7 @@ export class AbsenceService {
   // Dodaj termin nieobecności
   addAbsence(absence: Absence): Observable<boolean> {
     this.absences.push(absence);
+    console.log(this.absences);
     return of(true);
   }
 

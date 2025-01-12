@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Schedule,Appointment } from '../../models/appointment';
+import { Schedule,Appointment,DailySchedule } from '../../models/appointment';
 import { ScheduleService } from '../../services/schedule.service';
 import { Absence } from '../../models/absence';
 import { AbsenceService } from '../../services/absence.service';
+import { Availability } from '../../models/availability';
+import { AvailabilityService } from '../../services/availability.service';
 
 export enum CalendarView {
   Week = 'week',
@@ -23,18 +25,21 @@ export class DoctorCalendarComponent implements OnInit {
   selectedStartTime: string | undefined;
   hours: string[] = []; // Przechowuje sloty czasowe
   monthDays: Date[] = []; // Przechowuje dni widoku
-  schedule: Schedule  = {}; // Przechowuje harmonogram (dane wizyt)
+  schedule: DailySchedule  = {}; // Przechowuje harmonogram (dane wizyt)
   public CalendarView = CalendarView;
 
   currentView: CalendarView = CalendarView.Week;
   absences: Absence[] = [];
+  availabilities: Availability[] = [];
+  
 
-  constructor(private scheduleService: ScheduleService, private absenceService: AbsenceService) {}
+  constructor(private scheduleService: ScheduleService, private absenceService: AbsenceService, private availabilityService: AvailabilityService) {}
 
   ngOnInit(): void {
     this.generateTimeSlots();
     this.generateView(this.currentView, this.viewDate);
     //this.loadMockSchedule(); // Mockowe dane wizyt
+    this.loadAvailabilities();
     this.loadAbsences(); // Pobierz nieobecności
     this.loadAppointments();
   }
@@ -56,9 +61,9 @@ export class DoctorCalendarComponent implements OnInit {
     
   // }
 
-
+  doctor_id = '0'
   loadAppointments(): void {
-    this.scheduleService.getSchedule().subscribe((scheduleFromService) => {
+    this.scheduleService.getScheduleForDoctor(this.doctor_id).subscribe((scheduleFromService) => {
       this.schedule = scheduleFromService;
   
       // Aktualizuj status wizyt na "canceled" w przypadku konfliktu z nieobecnością
@@ -88,8 +93,9 @@ export class DoctorCalendarComponent implements OnInit {
 
   // Generowanie slotów czasowych co 30 minut
   generateTimeSlots(): void {
-    for (let hour = 8; hour < 15; hour++) { // Tylko 6 godzin
+    for (let hour = 8; hour < 14; hour++) { // Tylko 6 godzin
       for (let minutes = 0; minutes < 60; minutes += 30) {
+        if (hour === 14 && minutes > 0) break;
         const time = `${hour < 10 ? '0' : ''}${hour}:${minutes === 0 ? '00' : minutes}`;
         this.hours.push(time);
       }
@@ -250,11 +256,50 @@ export class DoctorCalendarComponent implements OnInit {
     const dayKey = day.toISOString().split('T')[0];
     return this.absences.some((absence) => absence.date === dayKey);
   }
+
+  isAvailable(day: Date, time: string): boolean {
+    const dayKey = day.toISOString().split('T')[0];
+    const dayOfWeek = day.toLocaleDateString('en-US', { weekday: 'short' }); // Skrót dnia tygodnia (np. "Mon", "Tue")
+  
+    return this.availabilities.some((availability) => {
+      // Sprawdź, czy data mieści się w zakresie dat dla cyklicznej dostępności
+      const isInDateRange =
+        (!availability.startDate || availability.startDate <= dayKey) &&
+        (!availability.endDate || availability.endDate >= dayKey);
+  
+      // Jeśli dostępność dotyczy konkretnych dni tygodnia, sprawdź je
+      const isDayOfWeekAvailable =
+        !availability.daysOfWeek || availability.daysOfWeek.includes(dayOfWeek);
+  
+      // Sprawdź, czy czas mieści się w którymś z przedziałów czasowych
+      const isTimeAvailable = availability.timeRanges.some((range) => {
+        return time >= range.start && time < range.end;
+      });
+  
+      return isInDateRange && isDayOfWeekAvailable && isTimeAvailable;
+    });
+  }
+  
+  
   
   loadAbsences(): void {
     this.absenceService.getAbsences().subscribe((absences) => {
       this.absences = absences;
     });
   }
+
+  loadAvailabilities(): void {
+    this.availabilityService.getAvailabilities().subscribe((availabilities) => {
+      this.availabilities = availabilities;
+  }
+  )
+}
+countAppointments(day: Date): number {
+  const dayKey = day.toISOString().split('T')[0]; // Konwertuj datę na klucz w harmonogramie
+  if (this.schedule[dayKey]) {
+    return this.schedule[dayKey].length; // Zwróć liczbę wizyt dla danego dnia
+  }
+  return 0; // Brak wizyt dla danego dnia
+}
   
 }

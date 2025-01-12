@@ -1,0 +1,78 @@
+.basket-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .empty-basket {
+    text-align: center;
+    font-size: 18px;
+    color: gray;
+  }
+  
+  .appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .appointment-item {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .appointment-item h3 {
+    margin: 0 0 10px;
+  }
+  
+  .appointment-item p {
+    margin: 5px 0;
+  }
+  
+  .remove-btn {
+    margin-top: 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .remove-btn:hover {
+    background-color: #ff1a1a;
+  }
+  
+  .payment-section {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .pay-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .pay-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .payment-success {
+    margin-top: 15px;
+    color: green;
+    font-weight: bold;
+  }
+  
