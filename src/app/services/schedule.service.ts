@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable,of, Scheduler } from 'rxjs';
 import { Schedule,Appointment,DailySchedule } from '../models/appointment';
 import { HttpClient } from '@angular/common/http';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 
@@ -17,7 +19,7 @@ export class ScheduleService {
     '0': {
       '2025-01-14': [
         {
-          id: 1,
+          id: '1',
           date: '2025-01-14',
           startTime: '08:00',
           endTime: '09:30',
@@ -27,7 +29,7 @@ export class ScheduleService {
           doctor_id: '0',
         },
         {
-          id: 1,
+          id: '40',
           date: '2025-01-14',
           startTime: '09:00',
           endTime: '09:30',
@@ -37,7 +39,7 @@ export class ScheduleService {
           doctor_id: '0',
         },
         {
-          id: 2,
+          id: '2',
           date: '2025-01-14',
           startTime: '11:00',
           endTime: '12:30',
@@ -49,7 +51,7 @@ export class ScheduleService {
       ],
       '2025-01-13': [
         {
-          id: 0,
+          id: '90',
           date: '2025-01-13',
           startTime: '10:00',
           endTime: '10:30',
@@ -59,7 +61,7 @@ export class ScheduleService {
           doctor_id: '0',
         },
         {
-          id: 4,
+          id: '43',
           date: '2025-01-13',
           startTime: '11:00',
           endTime: '11:30',
@@ -71,7 +73,7 @@ export class ScheduleService {
       ],
       '2025-01-15': [
         {
-          id: 0,
+          id: '065',
           date: '2025-01-13',
           startTime: '10:00',
           endTime: '10:30',
@@ -81,7 +83,7 @@ export class ScheduleService {
           doctor_id: '0',
         },
         {
-          id: 4,
+          id: '420',
           date: '2025-01-13',
           startTime: '11:00',
           endTime: '11:30',
@@ -93,7 +95,7 @@ export class ScheduleService {
       ],
       '2025-01-16': [
         {
-          id: 0,
+          id: '05054',
           date: '2025-01-13',
           startTime: '13:00',
           endTime: '13:30',
@@ -103,7 +105,7 @@ export class ScheduleService {
           doctor_id: '0',
         },
         {
-          id: 4,
+          id: '413432',
           date: '2025-01-13',
           startTime: '11:00',
           endTime: '11:30',
@@ -112,12 +114,23 @@ export class ScheduleService {
           patient_id: '100',
           doctor_id: '0',
         },
+
       ],
+      '2025-01-21':[
+          {id: '413399432',
+          date: '2025-01-21',
+          startTime: '11:00',
+          endTime: '11:30',
+          type: 'Consultation',
+          status: 'reserved',
+          patient_id: '1',
+          doctor_id: '0',}
+        ],
     },
     '1': {
       '2025-01-12': [
         {
-          id: 3,
+          id: '543',
           date: '2025-01-12',
           startTime: '09:00',
           endTime: '09:30',
@@ -158,10 +171,17 @@ export class ScheduleService {
     return of(appointments);
   }
 
+  private generateAppointmentId(): string {
+    return uuidv4(); // Generuje unikalny identyfikator UUID
+  }
+  
+
   /**
    * Dodaj wizytę do harmonogramu
    */
   addAppointment(doctorId: string, date: string, appointment: Appointment): Observable<boolean> {
+    appointment.id = this.generateAppointmentId();
+    console.log(appointment);
     if (!this.schedule[doctorId]) {
       this.schedule[doctorId] = {};
     }
@@ -175,20 +195,34 @@ export class ScheduleService {
   /**
    * Usuń wizytę z harmonogramu
    */
-  removeAppointment(doctorId: string, date: string, appointmentId: number): Observable<boolean> {
+  // removeAppointment(doctorId: string, date: string, appointmentId: string): Observable<boolean> {
+  //   if (this.schedule[doctorId] && this.schedule[doctorId][date]) {
+  //     this.schedule[doctorId][date] = this.schedule[doctorId][date].filter(
+  //       (appointment) => appointment.id !== appointmentId
+  //     );
+  //     return of(true);
+  //   }
+  //   return of(false);
+  // }
+  removeAppointment(doctorId: string, date: string, appointmentId: string): Observable<boolean> {
     if (this.schedule[doctorId] && this.schedule[doctorId][date]) {
+      const initialLength = this.schedule[doctorId][date].length;
+  
+      // Usuń wizytę z harmonogramu
       this.schedule[doctorId][date] = this.schedule[doctorId][date].filter(
         (appointment) => appointment.id !== appointmentId
       );
-      return of(true);
+  
+      // Jeśli wizyta została usunięta
+      return of(this.schedule[doctorId][date].length < initialLength);
     }
-    return of(false);
+    return of(false); // Jeśli wizyta nie została znaleziona
   }
 
   /**
    * Aktualizuj status wizyty
    */
-  updateAppointmentStatus(doctorId: string, date: string, appointmentId: number, status: string): Observable<boolean> {
+  updateAppointmentStatus(doctorId: string, date: string, appointmentId: string, status: string): Observable<boolean> {
     if (this.schedule[doctorId] && this.schedule[doctorId][date]) {
       const appointment = this.schedule[doctorId][date].find((app) => app.id === appointmentId);
       if (appointment) {

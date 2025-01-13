@@ -15,6 +15,12 @@ export class AbsenceService {
       reason: 'Vacation', // Powód nieobecności
       doctor_id: '0'
     },
+    // {
+    //   id:4,
+    //   date: '2025-01-21',
+    //   reason: 'Huje',
+    //   doctor_id: '0'
+    // },
     {
       id: 2,
       date: '2025-01-15', // Data nieobecności

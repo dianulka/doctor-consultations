@@ -34,7 +34,7 @@ export class BaseCalendarComponent {
     availabilities: Availability[] = [];
     
   
-    constructor(private scheduleService: ScheduleService, private absenceService: AbsenceService, private availabilityService: AvailabilityService) {}
+    constructor(protected scheduleService: ScheduleService, private absenceService: AbsenceService, private availabilityService: AvailabilityService) {}
   
     ngOnInit(): void {
       this.generateTimeSlots();
@@ -143,17 +143,34 @@ export class BaseCalendarComponent {
   
   
     // Sprawdza, czy slot jest zarezerwowany
-    isSlotReserved(day: Date, time: string): boolean {
-  
-      const dayKey = day.toISOString().split('T')[0];
-      const daySchedule = this.schedule[dayKey] || [];
-      return daySchedule.some((slot: any) => slot.startTime === time && slot.status === 'reserved');
-      // Filtrowanie wizyt na podstawie daty
-    // Sprawdzanie, czy którykolwiek slot w wyfiltrowanym harmonogramie pasuje do czasu i jest zarezerwowany
-      // const daySchedule = this.appointments.filter(appointment => appointment.date === dayKey);
-      // return daySchedule.some(slot => slot.startTime === time && slot.status === 'reserved');
-  
-    }
+    // isSlotReserved(day: Date, time: string): boolean {
+    //   const dayKey = day.toISOString().split('T')[0];
+    //   const daySchedule = this.schedule[dayKey] || [];
+
+      
+    //   return daySchedule.some((slot: any) => slot.startTime === time && slot.status === 'reserved');
+      
+    // }
+
+    // Sprawdza, czy slot (lub jego zakres) jest zarezerwowany
+  isSlotReserved(day: Date, time: string, duration: number = 30): boolean {
+    const dayKey = day.toISOString().split('T')[0];
+    const daySchedule = this.schedule[dayKey] || [];
+
+    // Oblicz początkowe i końcowe minuty wybranego zakresu
+    const startMinutes = this.timeToMinutes(time);
+    const endMinutes = startMinutes + duration;
+
+    // Sprawdź, czy którykolwiek slot w harmonogramie zachodzi na zakres
+    return daySchedule.some((slot: any) => {
+      const slotStart = this.timeToMinutes(slot.startTime);
+      const slotEnd = this.timeToMinutes(slot.endTime);
+
+      // Konflikt: nowy zakres zachodzi na istniejący zakres
+      return startMinutes < slotEnd && endMinutes > slotStart && slot.status === 'reserved';
+    });
+  }
+
   
     // Sprawdza, czy slot jest przeszły
     isPastSlot(day: Date, time: string): boolean {
@@ -281,7 +298,7 @@ export class BaseCalendarComponent {
     const dayKey = day.toISOString().split('T')[0]; // Konwertuj datę na klucz w harmonogramie
     if (this.schedule[dayKey]) {
       return this.schedule[dayKey].length; // Zwróć liczbę wizyt dla danego dnia
-      }
+    }
     return 0; // Brak wizyt dla danego dnia
   }
 
@@ -293,5 +310,28 @@ export class BaseCalendarComponent {
   onLeave(): void {
     // Domyślna implementacja (może być pusta)
     console.log('Mouse left slot in base-calendar');
+  }
+
+  checkConflicts(day: Date, startTime: string, duration: number): boolean {
+    const dayKey = day.toISOString().split('T')[0];
+    const startMinutes = this.timeToMinutes(startTime);
+    const endMinutes = startMinutes + duration;
+  
+    const dayAppointments = this.schedule[dayKey] || [];
+    console.log(duration);
+    // Konflikt: nowa wizyta kończy się po rozpoczęciu istniejącej wizyty
+    return dayAppointments.some((appointment) => {
+      const appointmentStart = this.timeToMinutes(appointment.startTime);
+      const appointmentEnd = this.timeToMinutes(appointment.endTime);
+  
+      // Konflikt występuje, jeśli nowa wizyta zachodzi na istniejącą
+      return startMinutes < appointmentEnd && endMinutes > appointmentStart;
+    });
+  }
+  
+
+  timeToMinutes(time: string): number {
+    const [hour, minute] = time.split(':').map(Number);
+    return hour * 60 + minute;
   }
 }

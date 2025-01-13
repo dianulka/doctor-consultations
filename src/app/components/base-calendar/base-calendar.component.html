@@ -36,7 +36,7 @@
         <td>{{ time }}</td>
         <td *ngFor="let day of monthDays"
             [ngClass]="{
-              'reserved': isSlotReserved(day, time) && isAvailable(day, time),
+              'reserved': isSlotReserved(day, time),
               'past': isPastSlot(day, time),
               'current': isCurrentSlot(day, time),
               'absence': isAbsence(day)
@@ -52,3 +52,7 @@
     </tbody>
   </table>
  
+
+  <!-- [ngClass]="{
+    'reserved': isSlotReserved(day, time) && isAvailable(day, time),
+    'past': isPastSlot(day, time), -->

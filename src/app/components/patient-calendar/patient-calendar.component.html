@@ -21,7 +21,7 @@
     <button (click)="switchToView(CalendarView.Week)">Week View</button>
     <button (click)="switchToView(CalendarView.Day)">Day View</button>
 
-    <button (click)="reserveAConsultation()"> Reserve a consultation</button>
+    <button (click)="reserveAnAppointment()"> Reserve a consultation</button>
   </div>
   
   <table>
@@ -38,7 +38,7 @@
         <td>{{ time }}</td>
         <td *ngFor="let day of monthDays"
             [ngClass]="{
-              'reserved': isSlotReserved(day, time) && isAvailable(day, time),
+              'reserved': isSlotReserved(day, time),
               'past': isPastSlot(day, time),
               'current': isCurrentSlot(day, time),
               'absence': isAbsence(day)
@@ -53,4 +53,65 @@
       </tr>
     </tbody>
   </table>
- 
+
+  <div class="dialog-overlay" *ngIf="showDialog">
+    <div class="dialog-content">
+      <h2>Reserve Consultation</h2>
+      
+      <!-- Data wizyty -->
+      <label>Date:</label>
+      <input type="date" [(ngModel)]="newAppointment.date" disabled />
+  
+      <!-- Godzina rozpoczęcia -->
+      <label>Start Time:</label>
+      <input type="time" [(ngModel)]="newAppointment.startTime" disabled />
+  
+      <!-- Długość konsultacji -->
+      <label>Duration (minutes):</label>
+      <select [(ngModel)]="appointmentDuration">
+        <option *ngFor="let duration of availableDurations" [value]="duration">
+          {{ duration }} minutes
+        </option>
+      </select>
+  
+      <!-- Typ konsultacji -->
+      <label>Type of Consultation:</label>
+      <select [(ngModel)]="newAppointment.type">
+        <option value="Initial Visit">Initial Visit</option>
+        <option value="Follow-up Visit">Follow-up Visit</option>
+        <option value="Chronic Illness">Chronic Illness</option>
+        <option value="Prescription">Prescription</option>
+      </select>
+  
+      <!-- Dane pacjenta -->
+      <label>Patient Name:</label>
+      <input type="text" [(ngModel)]="newAppointment.patient_name" />
+  
+      <label>Patient Gender:</label>
+      <select [(ngModel)]="newAppointment.patient_gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+  
+      <label>Patient Age:</label>
+      <input type="number" [(ngModel)]="newAppointment.patient_age" />
+  
+      <!-- Notatki dla lekarza -->
+      <label>Notes for Doctor:</label>
+      <textarea [(ngModel)]="newAppointment.notes"></textarea>
+  
+      <div class="dialog-buttons">
+        <button (click)="submitReservation()">Submit</button>
+        <button (click)="cancelDialog()">Cancel</button>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="hoveredAppointment && hoveredAppointment.patient_id === patient_id">
+    <h3>Consultation Details</h3>
+    
+    
+    <button (click)="cancelAppointment()">Cancel Appointment</button>
+  </div>
+  

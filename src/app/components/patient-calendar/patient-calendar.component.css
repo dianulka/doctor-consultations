@@ -56,3 +56,72 @@ table {
         color: white;
     }
       
+    .reserve-form {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px 0;
+        background: #f9f9f9;
+        border-radius: 5px;
+      }
+      
+      .reserve-form label {
+        display: block;
+        margin: 10px 0 5px;
+      }
+      
+      .reserve-form input,
+      .reserve-form select,
+      .reserve-form textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+      }
+      
+      .reserve-form button {
+        margin-right: 10px;
+      }
+      
+      .dialog-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Półprzezroczyste tło */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      
+      .dialog-content {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        width: 400px;
+        max-width: 90%;
+      }
+      
+      .dialog-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+      
+      .dialog-buttons button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      
+      .dialog-buttons button:first-child {
+        background-color: #4caf50; /* Zielony */
+        color: white;
+      }
+      
+      .dialog-buttons button:last-child {
+        background-color: #f44336; /* Czerwony */
+        color: white;
+      }
