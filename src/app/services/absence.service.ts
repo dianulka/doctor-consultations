@@ -21,14 +21,14 @@ export class AbsenceService {
     //   reason: 'Huje',
     //   doctor_id: '0'
     // },
+    // {
+    //   id: 2,
+    //   date: '2025-01-15', // Data nieobecności
+    //   reason: 'Conference', // Powód nieobecności
+    //   doctor_id: '0'
+    // },
     {
       id: 2,
-      date: '2025-01-15', // Data nieobecności
-      reason: 'Conference', // Powód nieobecności
-      doctor_id: '0'
-    },
-    {
-      id: 3,
       date: '2025-01-20', // Data nieobecności
       reason: 'Personal leave', // Powód nieobecności
       doctor_id: '0'

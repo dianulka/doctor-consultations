@@ -16,8 +16,8 @@ export class ScheduleService {
   private apiUrl = 'http://localhost:3000';
 
   private schedule: Schedule = {
-    '0': {
-      '2025-01-14': [
+    '0': { //id lekarza
+      '2025-01-14': [ //dzien
         {
           id: '1',
           date: '2025-01-14',

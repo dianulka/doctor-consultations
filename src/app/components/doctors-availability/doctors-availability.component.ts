@@ -1,9 +1,11 @@
 import { Component, NgModule } from '@angular/core';
 import { Availability } from '../../models/availability';
-import { AvailabilityService } from '../../services/availability.service';
+//import { AvailabilityService } from '../../services/availability.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
+import { AvailabilityService } from '../../services/availability.service';
 
+import { AvailabilityFirebaseService } from '../../services/firebase/availability-firebase.service';
 
 
 @Component({
@@ -32,7 +34,8 @@ export class DoctorsAvailabilityComponent {
 
   
 
-  constructor(private availabilityService: AvailabilityService) {}
+  // constructor(private availabilityService: AvailabilityService) {}
+  constructor(private availabilityService: AvailabilityFirebaseService) {}
 
   ngOnInit(): void {
     this.loadAvailabilities();
@@ -48,9 +51,6 @@ export class DoctorsAvailabilityComponent {
 
   // Dodaj nową dostępność
   addAvailability(): void {
-    // if (!this.newAvailability.daysOfWeek) {
-    //   this.newAvailability.daysOfWeek = [];
-    // }
 
     if (!this.newAvailability.timeRanges || this.newAvailability.timeRanges.length === 0) {
       this.newAvailability.timeRanges = this.generateDefaultTimeRanges(); // Domyślne godziny
@@ -61,6 +61,7 @@ export class DoctorsAvailabilityComponent {
       this.resetForm(); // Wyczyść formularz
     });
   }
+  
   
 
   // Resetuj formularz

@@ -1,5 +1,6 @@
 export interface Availability {
-    id?: number;
+    // id?: number;
+    id?: string;
     type: 'cyclic' | 'one-time'; // Typ dostępności
     startDate: string; // Format YYYY-MM-DD
     endDate?: string; // Format YYYY-MM-DD (dla cyklicznej dostępności)
@@ -7,4 +8,7 @@ export interface Availability {
     timeRanges: { start: string; end: string }[]; // Przedziały czasowe
     doctor_id: string; // ID lekarza
 }
+  
+
+
   

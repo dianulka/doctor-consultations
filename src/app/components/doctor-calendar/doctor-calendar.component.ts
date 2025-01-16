@@ -5,7 +5,6 @@ import { ScheduleService } from '../../services/schedule.service';
 import { Absence } from '../../models/absence';
 import { AbsenceService } from '../../services/absence.service';
 import { Availability } from '../../models/availability';
-import { AvailabilityService } from '../../services/availability.service';
 import { BaseCalendarComponent } from '../base-calendar/base-calendar.component';
 
 export enum CalendarView {

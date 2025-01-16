@@ -6,7 +6,11 @@ import { Absence } from '../../models/absence';
 import { AbsenceService } from '../../services/absence.service';
 import { Availability } from '../../models/availability';
 import { AvailabilityService } from '../../services/availability.service';
+import { inject } from '@angular/core';
 
+import { AbsenceFirebaseService } from '../../services/firebase/absence-firebase.service';
+import { AvailabilityFirebaseService } from '../../services/firebase/availability-firebase.service';
+import { ScheduleFirebaseService } from '../../services/firebase/schedule-firebase.service';
 
 
 export enum CalendarView {
@@ -21,7 +25,7 @@ export enum CalendarView {
   styleUrl: './base-calendar.component.css'
 })
 export class BaseCalendarComponent {
-  viewDate: Date = new Date(); // Obecna data
+    viewDate: Date = new Date(); // Obecna data
     selectedDate: Date | null = null;
     selectedStartTime: string | undefined;
     hours: string[] = []; // Przechowuje sloty czasowe
@@ -33,8 +37,8 @@ export class BaseCalendarComponent {
     absences: Absence[] = [];
     availabilities: Availability[] = [];
     
-  
-    constructor(protected scheduleService: ScheduleService, private absenceService: AbsenceService, private availabilityService: AvailabilityService) {}
+
+    constructor(protected scheduleService: ScheduleService, private absenceService: AbsenceFirebaseService, private availabilityService: AvailabilityFirebaseService) {}
   
     ngOnInit(): void {
       this.generateTimeSlots();
@@ -62,10 +66,29 @@ export class BaseCalendarComponent {
       
     // }
   
+    scheduleServiceFirebase = inject(ScheduleFirebaseService)
     doctor_id = '0'
+    // loadAppointments(): void {
+    //   this.scheduleService.getScheduleForDoctor(this.doctor_id).subscribe((scheduleFromService) => {
+    //     this.schedule = scheduleFromService;
+    //     console.log(this.schedule);
+    
+    //     // Aktualizuj status wizyt na "canceled" w przypadku konfliktu z nieobecnością
+    //     Object.keys(this.schedule).forEach((date) => {
+    //       if (this.absences.some((absence) => absence.date === date)) {
+    //         this.schedule[date].forEach((appointment) => {
+    //           appointment.status = 'canceled';
+    //         });
+    //       }
+    //     });
+    //   });
+    // }
+
+
     loadAppointments(): void {
-      this.scheduleService.getScheduleForDoctor(this.doctor_id).subscribe((scheduleFromService) => {
+      this.scheduleServiceFirebase.getScheduleForDoctor(this.doctor_id).subscribe((scheduleFromService) => {
         this.schedule = scheduleFromService;
+        console.log(this.schedule);
     
         // Aktualizuj status wizyt na "canceled" w przypadku konfliktu z nieobecnością
         Object.keys(this.schedule).forEach((date) => {
@@ -282,6 +305,12 @@ export class BaseCalendarComponent {
     
     
     
+    // loadAbsences(): void {
+    //   this.absenceService.getAbsences().subscribe((absences) => {
+    //     this.absences = absences;
+    //   });
+    // }
+
     loadAbsences(): void {
       this.absenceService.getAbsences().subscribe((absences) => {
         this.absences = absences;
@@ -292,7 +321,9 @@ export class BaseCalendarComponent {
       this.availabilityService.getAvailabilities().subscribe((availabilities) => {
         this.availabilities = availabilities;
     }
+    
     )
+    console.log(this.availabilities);
   }
     countAppointments(day: Date): number {
     const dayKey = day.toISOString().split('T')[0]; // Konwertuj datę na klucz w harmonogramie

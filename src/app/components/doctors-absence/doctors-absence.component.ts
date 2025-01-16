@@ -3,6 +3,7 @@ import { Absence } from '../../models/absence';
 import { AbsenceService } from '../../services/absence.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AbsenceFirebaseService } from '../../services/firebase/absence-firebase.service';
 @Component({
   selector: 'app-doctors-absence',
   standalone: true,
@@ -15,7 +16,7 @@ export class DoctorsAbsenceComponent {
   newAbsence: Absence = { date: '', reason: '', doctor_id: '0' }; // Nowa nieobecność
   absences: Absence[] = []; // Lista nieobecności
 
-  constructor(private absenceService: AbsenceService) {}
+  constructor(private absenceService: AbsenceFirebaseService) {}
 
   ngOnInit(): void {
     this.loadAbsences();
@@ -28,6 +29,7 @@ export class DoctorsAbsenceComponent {
     });
   }
 
+  
   // Dodaj nieobecność
   addAbsence(): void {
     if (this.newAbsence.date) {

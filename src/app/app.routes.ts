@@ -3,7 +3,7 @@ import { LandingPageComponent } from './components/landing-page/landing-page.com
 import { DoctorCalendarComponent } from './components/doctor-calendar/doctor-calendar.component';
 import { DoctorsAvailabilityComponent } from './components/doctors-availability/doctors-availability.component';
 import { DoctorsAbsenceComponent } from './components/doctors-absence/doctors-absence.component';
-import { PatientCalendarComponent } from './components/patient-calendar/patient-calendar.component';
+// import { PatientCalendarComponent } from './components/patient-calendar/patient-calendar.component';
 import { BasketComponent } from './components/basket/basket.component';
 export const routes: Routes = [
     { path: '', component: LandingPageComponent },
@@ -35,10 +35,10 @@ export const routes: Routes = [
         //   { path: 'history', component: PatientHistoryComponent },
           
           // Nowy routing dla PatientCalendarComponent
-          { 
-            path: 'calendar/:doctorId', 
-            component: PatientCalendarComponent 
-          },
+          // { 
+          //   path: 'calendar/:doctorId', 
+          //   component: PatientCalendarComponent 
+          // },
           {
             path: 'basket',
             component: BasketComponent
