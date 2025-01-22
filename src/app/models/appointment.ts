@@ -13,11 +13,11 @@ export interface Appointment {
     patient_name?:string;
 }
 
-export interface DailySchedule {
-    [date: string]: Appointment[]; // Klucz: data (YYYY-MM-DD), Wartość: lista wizyt
-}
+// export interface DailySchedule {
+//     [date: string]: Appointment[]; // Klucz: data (YYYY-MM-DD), Wartość: lista wizyt
+// }
   
-  // Harmonogram dla wszystkich lekarzy
-export interface Schedule {
-    [doctorId: string]: DailySchedule; // Klucz: ID lekarza, Wartość: DailySchedule
-}
+//   // Harmonogram dla wszystkich lekarzy
+// export interface Schedule {
+//     [doctorId: string]: DailySchedule; // Klucz: ID lekarza, Wartość: DailySchedule
+// }

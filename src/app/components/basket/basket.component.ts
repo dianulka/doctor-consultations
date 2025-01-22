@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ScheduleService } from '../../services/schedule.service';
-import { Appointment,DailySchedule } from '../../models/appointment';
+import { Appointment } from '../../models/appointment';
 import { CommonModule } from '@angular/common';
+import { ScheduleFirebaseService } from '../../services/firebase/schedule-firebase.service';
 @Component({
   selector: 'app-basket',
   standalone: true,
@@ -11,19 +12,19 @@ import { CommonModule } from '@angular/common';
 })
 export class BasketComponent implements OnInit{
   patient_id: string = '1'; // Identyfikator pacjenta
-  patientAppointements: Appointment[] = []; // Lista wizyt pacjenta
+  patientAppointments: Appointment[] = []; // Lista wizyt pacjenta
   paymentSuccess: boolean = false; // Flaga dla sukcesu płatności
 
-  constructor(private scheduleService: ScheduleService) {}
+  constructor(private scheduleService: ScheduleFirebaseService) {}
 
   ngOnInit(): void {
-    this.loadAppointements();
+    this.loadAppointments();
   }
 
   // Ładowanie wizyt pacjenta
-  loadAppointements(): void {
-    this.scheduleService.getScheduleForPatient(this.patient_id).subscribe((patientAppointements) => {
-      this.patientAppointements = patientAppointements;
+  loadAppointments(): void {
+    this.scheduleService.getAppointmentsForPatient(this.patient_id).subscribe((appointments) => {
+      this.patientAppointments = appointments;
     });
   }
 
@@ -37,13 +38,42 @@ export class BasketComponent implements OnInit{
   //   });
   // }
 
+  // Usuwanie wizyty
+  removeAppointment(appointmentId: string): void {
+    const appointmentToRemove = this.patientAppointments.find(
+      (appointment) => appointment.id === appointmentId
+    );
+
+    if (!appointmentToRemove) {
+      alert('Appointment not found.');
+      return;
+    }
+
+    this.scheduleService.removeAppointment(appointmentId).subscribe((success) => {
+      if (success) {
+        this.patientAppointments = this.patientAppointments.filter(
+          (appointment) => appointment.id !== appointmentId
+        );
+        alert('Appointment removed successfully.');
+      } else {
+        alert('Failed to remove the appointment.');
+      }
+    });
+  }
+
+
   // Symulacja płatności
   simulatePayment(): void {
-    if (this.patientAppointements.length > 0) {
+    if (this.patientAppointments.length > 0) {
       this.paymentSuccess = true;
+      alert('Payment successful!');
+
+      // Reset komunikatu po 3 sekundach
       setTimeout(() => {
-        this.paymentSuccess = false; // Reset komunikatu po 3 sekundach
-      }, 10000);
+        this.paymentSuccess = false;
+      }, 3000);
+    } else {
+      alert('No appointments to pay for.');
     }
   }
 
