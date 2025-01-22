@@ -8,11 +8,12 @@ import { BasketComponent } from './components/basket/basket.component';
 import { AppointmentDialogComponent } from './components/appointment-dialog/appointment-dialog.component';
 import { BaseCalendarComponent } from './components/base-calendar/base-calendar.component';
 import { PatientCalendarComponent } from './components/patient-calendar/patient-calendar.component';
+import { RegisterComponent } from './components/auth/register/register.component';
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, DoctorCalendarComponent, DoctorsAvailabilityComponent, DoctorsAbsenceComponent,
-    BasketComponent,AppointmentDialogComponent, BaseCalendarComponent, PatientCalendarComponent],
+    BasketComponent,AppointmentDialogComponent, BaseCalendarComponent, PatientCalendarComponent,RegisterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

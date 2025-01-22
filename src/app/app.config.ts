@@ -7,6 +7,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { BaseCalendarComponent } from './components/base-calendar/base-calendar.component';
 import { Firestore } from '@angular/fire/firestore/lite';
 import { provideHttpClient } from '@angular/common/http';
+import { getAuth, provideAuth } from '@angular/fire/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -24,7 +25,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
-    provideHttpClient()
+    provideHttpClient(),
+    provideAuth(()=>getAuth())
   
   ]
 };

@@ -62,10 +62,13 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
 
       // Ustaw dostępne długości konsultacji w zależności od wybranego slotu
       this.availableDurations = [];
-      if (slotIndex === this.hours.length - 1) {
+      if (slotIndex === this.hours.length - 1 
+      ) {
         // Ostatni slot: tylko 30 minut dostępne
         this.availableDurations = [30];
-      } else if (slotIndex === this.hours.length - 2) {
+      } else if (slotIndex === this.hours.length - 2
+
+      ) {
         // Przedostatni slot: 30 lub 60 minut dostępne
         this.availableDurations = [30, 60];
       } else {
@@ -78,6 +81,21 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
     }
   }
 
+  nextTimeSlot(time:string): string {
+    let [hour , minutes] = time.split(':').map(Number);
+    if (minutes === 30) {
+      hour++;
+      minutes = 0;
+    } else {
+      minutes = 30;
+    }
+    let hourString = hour.toString().padStart(2, '0');
+    let minutesString = minutes.toString().padEnd(2, '0');
+    let nextTime = `${hourString}:${minutesString}`;
+    console.log (nextTime);
+    return nextTime;
+
+  }
 
   updateEndTime(): void {
     console.log('starttime' + this.newAppointment.startTime);

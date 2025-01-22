@@ -1,0 +1,48 @@
+<div class="login-container">
+    <h2>Logowanie</h2>
+  
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="Wprowadź adres email"
+        />
+        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error">
+          Podaj poprawny adres email.
+        </div>
+      </div>
+  
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Hasło</label>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          formControlName="password"
+          placeholder="Wprowadź hasło"
+        />
+        <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
+          Hasło musi mieć co najmniej 6 znaków.
+        </div>
+      </div>
+  
+      <!-- Submit Button -->
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading || loginForm.invalid">
+          {{ isLoading ? 'Logowanie...' : 'Zaloguj się' }}
+        </button>
+      </div>
+    </form>
+  
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+  </div>
+  

@@ -1,5 +1,4 @@
 export interface Availability {
-    // id?: number;
     id?: string;
     type: 'cyclic' | 'one-time'; // Typ dostępności
     startDate: string; // Format YYYY-MM-DD

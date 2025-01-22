@@ -66,7 +66,7 @@ export class BaseCalendarComponent {
       
     // }
   
-    scheduleServiceFirebase = inject(ScheduleFirebaseService)
+    //scheduleServiceFirebase = inject(ScheduleFirebaseService)
     doctor_id = '0'
     // loadAppointments(): void {
     //   this.scheduleService.getScheduleForDoctor(this.doctor_id).subscribe((scheduleFromService) => {
@@ -86,7 +86,7 @@ export class BaseCalendarComponent {
 
 
     loadAppointments(): void {
-      this.scheduleServiceFirebase.getScheduleForDoctor(this.doctor_id).subscribe((scheduleFromService) => {
+      this.scheduleService.getScheduleForDoctor(this.doctor_id).subscribe((scheduleFromService) => {
         this.schedule = scheduleFromService;
         console.log(this.schedule);
     
