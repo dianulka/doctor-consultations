@@ -107,13 +107,14 @@ export class ScheduleFirebaseService {
     const appointmentDoc = doc(this.firestore, `appointments/${appointmentId}`);
     return from(deleteDoc(appointmentDoc)).pipe(
       map(() => {
-        console.log('Appointment removed successfully.');
+        console.log(`Appointment ${appointmentId} removed successfully.`);
         return true;
       }),
-      // Jeśli usuwanie nie powiedzie się, złap błąd
+      // Jeśli usuwanie nie powiedzie się, zwróć `false`
       map(() => false)
     );
   }
+  
 
   /**
    * Sprawdź konflikty w wizytach dla konkretnego dnia i przedziału czasowego

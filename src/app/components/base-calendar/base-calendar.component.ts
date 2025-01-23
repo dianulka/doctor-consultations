@@ -55,18 +55,39 @@ export class BaseCalendarComponent {
   
 
     loadAppointments(): void {
-      this.scheduleService.getAllAppointments().subscribe((appointments) => {
+      this.scheduleService.getAppointmentsRealtime().subscribe((appointments) => {
         this.appointments = appointments;
-        console.log(this.appointments);
-  
-        // Aktualizuj status wizyt na "canceled" w przypadku konfliktu z nieobecnością
-        this.absences.forEach((absence) => {
-          this.appointments.forEach((appointment) => {
-            if (appointment.date === absence.date) {
-              appointment.status = 'canceled';
-            }
-          });
-        });
+        this.updateAppointmentsWithAbsences(); // Zaktualizuj wizyty na podstawie nieobecności
+        console.log('Appointments updated in real-time:', this.appointments);
+      });
+    }
+    
+    loadAbsences(): void {
+      this.absenceService.getAbsencesRealtime().subscribe((absences) => {
+        this.absences = absences;
+        this.updateAppointmentsWithAbsences(); // Zaktualizuj status wizyt
+        console.log('Absences updated in real-time:', this.absences);
+      });
+    }
+    
+    loadAvailabilities(): void {
+      this.availabilityService.getAvailabilitiesRealtime().subscribe((availabilities) => {
+        this.availabilities = availabilities;
+        console.log('Availabilities updated in real-time:', this.availabilities);
+      });
+    }
+
+    updateAppointmentsWithAbsences(): void {
+      // Sprawdź, które wizyty powinny być oznaczone jako "canceled"
+      this.appointments.forEach((appointment) => {
+        const conflictingAbsence = this.absences.find(
+          (absence) => absence.date === appointment.date && absence.doctor_id === appointment.doctor_id
+        );
+    
+        if (conflictingAbsence) {
+          // Zmień status wizyty na "canceled"
+          appointment.status = 'canceled';
+        }
       });
     }
   
@@ -261,20 +282,20 @@ export class BaseCalendarComponent {
     }
     
     
-    loadAbsences(): void {
-      this.absenceService.getAbsences().subscribe((absences) => {
-        this.absences = absences;
-      });
-    }
+    // loadAbsences(): void {
+    //   this.absenceService.getAbsences().subscribe((absences) => {
+    //     this.absences = absences;
+    //   });
+    // }
   
-    loadAvailabilities(): void {
-      this.availabilityService.getAvailabilities().subscribe((availabilities) => {
-        this.availabilities = availabilities;
-    }
+    // loadAvailabilities(): void {
+    //   this.availabilityService.getAvailabilities().subscribe((availabilities) => {
+    //     this.availabilities = availabilities;
+    // }
     
-    )
-    console.log(this.availabilities);
-  }
+  //   )
+  //   console.log(this.availabilities);
+  // }
   countAppointments(day: Date): number {
     const dayKey = day.toISOString().split('T')[0]; // Konwertuj datę na format YYYY-MM-DD
     return this.appointments.filter((appointment) => appointment.date === dayKey).length;

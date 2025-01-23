@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class ScheduleService {
   private appointments: Appointment[] = [
     {
-      id: '1',
+    id: '1',
       date: '2025-01-14',
       startTime: '08:00',
       endTime: '09:30',
@@ -22,7 +22,7 @@ export class ScheduleService {
       patient_gender: 'Male',
     },
     {
-      id: '2',
+     id: '2',
       date: '2025-01-14',
       startTime: '10:00',
       endTime: '10:30',

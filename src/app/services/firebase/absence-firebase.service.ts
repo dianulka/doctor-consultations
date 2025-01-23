@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore ,addDoc,collection,collectionData} from '@angular/fire/firestore';
+import { Firestore ,addDoc,collection,collectionData, onSnapshot} from '@angular/fire/firestore';
 import { inject } from '@angular/core';
 import { Observable ,from} from 'rxjs';
 import { Absence } from '../../models/absence';
@@ -27,6 +27,21 @@ export class AbsenceFirebaseService {
                     .then(response => response.id);
 
     return from(promise);
+  }
+
+  getAbsencesRealtime(): Observable<Absence[]> {
+    return new Observable((observer) => {
+      const unsubscribe = onSnapshot(this.absenceCollection, (snapshot) => {
+        const absences = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        } as Absence));
+
+        observer.next(absences);
+      });
+
+      return { unsubscribe };
+    });
   }
 
 

@@ -208,19 +208,30 @@ cancelAppointment(): void {
     if (confirm('Are you sure you want to cancel this appointment?')) {
       this.scheduleService
         .removeAppointment(this.hoveredAppointment.id!)
-        .subscribe((success) => {
-          if (success) {
-            alert('Appointment canceled successfully.');
-            this.loadAppointments();
-          } else {
+        .subscribe({
+          next: (success) => {
+            if (success) {
+              alert('Appointment canceled successfully.');
+              // Usuń wizytę z lokalnej listy, aby odświeżyć widok
+              this.appointments = this.appointments.filter(
+                (appointment) => appointment.id !== this.hoveredAppointment?.id
+              );
+              this.hoveredAppointment = null;
+            } else {
+              alert('Failed to cancel the appointment.');
+            }
+          },
+          error: (err) => {
+            console.error('Error canceling appointment:', err);
             alert('Failed to cancel the appointment.');
-          }
+          },
         });
     }
   } else {
     alert('You can only cancel your own appointments.');
   }
 }
+
 
 // Nadpisanie `onHover` dla pacjenta
 override onHover(day: Date, time: string): void {

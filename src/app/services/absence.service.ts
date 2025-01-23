@@ -10,7 +10,7 @@ export class AbsenceService {
 
   private absences: Absence[] = [
     {
-      id: 1,
+      id: '1',
       date: '2025-01-12', // Data nieobecności
       reason: 'Vacation', // Powód nieobecności
       doctor_id: '0'
@@ -28,7 +28,7 @@ export class AbsenceService {
     //   doctor_id: '0'
     // },
     {
-      id: 2,
+      id: '2',
       date: '2025-01-20', // Data nieobecności
       reason: 'Personal leave', // Powód nieobecności
       doctor_id: '0'
