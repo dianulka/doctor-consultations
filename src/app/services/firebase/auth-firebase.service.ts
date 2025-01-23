@@ -2,7 +2,11 @@ import { Injectable ,inject} from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, SignInMethod, signInWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { update } from '@angular/fire/database';
 import { Observable, from } from 'rxjs';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc,getDoc } from '@angular/fire/firestore';
+import { map } from 'rxjs';
+import { User } from '../../models/user';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -10,6 +14,8 @@ export class AuthFirebaseService {
 
   private auth = inject(Auth);
   private firestore = inject(Firestore);
+  private router = inject(Router);
+  private currentUserSubject = new BehaviorSubject<any | null>(null);
 
   constructor() {}
 
@@ -40,21 +46,37 @@ export class AuthFirebaseService {
     return from(promise);
   }
 
-  login(email:string, password:string): Observable<void>{
-    
-    const promise = signInWithEmailAndPassword(
-      this.auth,
-      email,
-      password).then(()=>{});
-    
-    
+  login(email: string, password: string): Observable<void> {
+    const promise = signInWithEmailAndPassword(this.auth, email, password).then((response) => {
+      const userRef = doc(this.firestore, `users/${response.user.uid}`);
+      return getDoc(userRef).then((doc) => {
+        const user = doc.data() as User;
+        console.log(user);
+        this.currentUserSubject.next(user);
+        if (user.role === 'Patient') {
+          this.router.navigate(['/patient-dashboard']);
+          console.log('patient');
+        } else if (user.role === 'Doctor') {
+          this.router.navigate(['/doctor-dashboard']);
+        } else if (user.role === 'Admin') {
+          this.router.navigate(['/admin-panel']);
+        }
+      });
+    });
+  
     return from(promise);
   }
+  
 
   logout(): Observable<void> {
     const promise = this.auth.signOut();
     return from(promise);
   }
 
+  
+
+  getCurrentUser(): Observable<any | null> {
+    return this.currentUserSubject.asObservable();
+  }
   
 }

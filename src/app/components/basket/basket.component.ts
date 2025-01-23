@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ScheduleService } from '../../services/schedule.service';
+//import { ScheduleService } from '../../services/schedule.service';
 import { Appointment } from '../../models/appointment';
 import { CommonModule } from '@angular/common';
 import { ScheduleFirebaseService } from '../../services/firebase/schedule-firebase.service';

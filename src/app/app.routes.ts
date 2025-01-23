@@ -7,10 +7,17 @@ import { PatientCalendarComponent } from './components/patient-calendar/patient-
 import { BasketComponent } from './components/basket/basket.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { AuthGuard } from './guards/auth.guard';
+import { PatientDashboardComponent } from './components/user/patient-dashboard/patient-dashboard.component';
+import { DoctorDashboardComponent } from './components/user/doctor-dashboard/doctor-dashboard.component';
+import { AdminPanelComponent } from './components/user/admin-panel/admin-panel.component';
 export const routes: Routes = [
     { path: '', component: LandingPageComponent },
     { path: 'login', component: LoginComponent },
     {path: 'register', component: RegisterComponent},
+    { path: 'patient-dashboard', component: PatientDashboardComponent, canActivate: [AuthGuard], data: { role: 'Patient' } },
+  { path: 'doctor-dashboard', component: DoctorDashboardComponent, canActivate: [AuthGuard], data: { role: 'Doctor' } },
+  { path: 'admin-panel', component: AdminPanelComponent, canActivate: [AuthGuard], data: { role: 'Admin' } },
     {path: 'doctor', 
         
     children: [

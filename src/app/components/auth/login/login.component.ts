@@ -35,7 +35,7 @@ export class LoginComponent {
     this.authService.login(email, password).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/patient/calendar']);
+        
       },
       error: () => {
         this.isLoading = false;
