@@ -9,7 +9,7 @@ export class AvailabilityService {
 
   private availabilities: Availability[] = [
     {
-      id: 0,
+      id: '0',
       type: 'cyclic',
       startDate: '2025-02-01',
       endDate: '2025-03-12',
@@ -30,7 +30,7 @@ export class AvailabilityService {
       doctor_id: '0'
     },
     {
-      id: 0,
+      id: '1',
       type: 'cyclic',
       startDate: '2025-01-07',
       endDate: '2025-01-18',
@@ -41,7 +41,7 @@ export class AvailabilityService {
       doctor_id: '0'
     },
     {
-      id: 2,
+      id: '2',
       type: 'one-time',
       startDate: '2025-02-19',
       timeRanges: [
@@ -73,7 +73,7 @@ export class AvailabilityService {
 
   // Dodaj dostępność
   addAvailability(availability: Availability): Observable<boolean> {
-    availability.id = this.availabilities.length + 1; // Generowanie ID
+    availability.id = '4';
     this.availabilities.push(availability);
     console.log(this.availabilities);
     return of(true);

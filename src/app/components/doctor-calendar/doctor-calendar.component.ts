@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Schedule,Appointment,DailySchedule } from '../../models/appointment';
+import { Appointment, } from '../../models/appointment';
 import { ScheduleService } from '../../services/schedule.service';
 import { Absence } from '../../models/absence';
 import { AbsenceService } from '../../services/absence.service';
 import { Availability } from '../../models/availability';
-import { AvailabilityService } from '../../services/availability.service';
 import { BaseCalendarComponent } from '../base-calendar/base-calendar.component';
+import { ScheduleFirebaseService } from '../../services/firebase/schedule-firebase.service';
 
 export enum CalendarView {
   Week = 'week',
@@ -23,43 +23,24 @@ export enum CalendarView {
 export class DoctorCalendarComponent extends BaseCalendarComponent {
   
   hoveredAppointment: Appointment | null = null; // Szczegóły wizyty, na którą najechano
+  
 
   // Obsługa najechania na slot
-  // override onHover(day: Date, time: string): void {
-
-  //   console.log('onHover in doctorComponent')
-  //   const dayKey = day.toISOString().split('T')[0];
-  //   if (this.schedule[dayKey]) {
-  //     this.hoveredAppointment = this.schedule[dayKey].find(
-  //       (appointment) =>
-  //         appointment.startTime === time && appointment.status === 'reserved'
-  //     ) || null; // Ustaw na null, jeśli brak dopasowania
-  //   } else {
-  //     this.hoveredAppointment = null;
-  //   }
-  // }
-
-  // Obsługa najechania na slot
-override onHover(day: Date, time: string): void {
-  console.log('onHover in doctorComponent');
-  
-  const dayKey = day.toISOString().split('T')[0];
-  
-  if (this.schedule[dayKey]) {
+  override onHover(day: Date, time: string): void {
+    console.log('onHover in doctorComponent');
     const timeInMinutes = this.timeToMinutes(time);
-    
-    // Znajdź wizytę, która obejmuje czas slotu
-    this.hoveredAppointment = this.schedule[dayKey].find((appointment) => {
+    this.hoveredAppointment = this.appointments.find((appointment) => {
       const startMinutes = this.timeToMinutes(appointment.startTime);
       const endMinutes = this.timeToMinutes(appointment.endTime);
-      
-      // Sprawdź, czy czas slotu mieści się w zakresie wizyty
-      return timeInMinutes >= startMinutes && timeInMinutes < endMinutes && appointment.status === 'reserved';
-    }) || null; // Ustaw na null, jeśli brak dopasowania
-  } else {
-    this.hoveredAppointment = null;
+
+      return (
+        appointment.date === day.toISOString().split('T')[0] &&
+        timeInMinutes >= startMinutes &&
+        timeInMinutes < endMinutes &&
+        appointment.status === 'reserved'
+      );
+    }) || null;
   }
-}
 
   // Obsługa opuszczenia slotu
   override onLeave(): void {

@@ -1,0 +1,74 @@
+<div class="register-container">
+    <h2>Rejestracja</h2>
+  
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Nazwa użytkownika</label>
+        <input id="username" type="text" class="form-control" formControlName="username" placeholder="Wprowadź nazwę użytkownika" />
+        <div *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid" class="error">
+          Nazwa użytkownika musi mieć co najmniej 3 znaki.
+        </div>
+      </div>
+  
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" class="form-control" formControlName="email" placeholder="Wprowadź adres email" />
+        <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="error">
+          Podaj poprawny adres email.
+        </div>
+      </div>
+  
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Hasło</label>
+        <input id="password" type="password" class="form-control" formControlName="password" placeholder="Wprowadź hasło" />
+        <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error">
+          Hasło musi mieć co najmniej 6 znaków.
+        </div>
+      </div>
+  
+      <!-- First Name -->
+      <div class="form-group">
+        <label for="firstName">Imię</label>
+        <input id="firstName" type="text" class="form-control" formControlName="firstName" placeholder="Wprowadź swoje imię" />
+      </div>
+  
+      <!-- Last Name -->
+      <div class="form-group">
+        <label for="lastName">Nazwisko</label>
+        <input id="lastName" type="text" class="form-control" formControlName="lastName" placeholder="Wprowadź swoje nazwisko" />
+      </div>
+  
+      <!-- Age -->
+      <div class="form-group">
+        <label for="age">Wiek</label>
+        <input id="age" type="number" class="form-control" formControlName="age" placeholder="Wprowadź swój wiek" />
+      </div>
+  
+      <!-- Gender -->
+      <div class="form-group">
+        <label for="gender">Płeć</label>
+        <select id="gender" class="form-control" formControlName="gender">
+          <option value="">Wybierz płeć</option>
+          <option value="Male">Mężczyzna</option>
+          <option value="Female">Kobieta</option>
+          <option value="Other">Inna</option>
+        </select>
+      </div>
+  
+      <!-- Submit Button -->
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading || registerForm.invalid">
+          {{ isLoading ? 'Rejestracja...' : 'Zarejestruj się' }}
+        </button>
+      </div>
+    </form>
+  
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+  </div>
+  

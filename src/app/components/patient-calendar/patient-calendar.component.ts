@@ -32,7 +32,7 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
     this.showDialog = false;
     this.resetForm();
   }
-  
+  doctor_id = '0';
   newAppointment: Appointment = {
     id: '',
     date: '',
@@ -62,10 +62,13 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
 
       // Ustaw dostępne długości konsultacji w zależności od wybranego slotu
       this.availableDurations = [];
-      if (slotIndex === this.hours.length - 1) {
+      if (slotIndex === this.hours.length - 1 
+      ) {
         // Ostatni slot: tylko 30 minut dostępne
         this.availableDurations = [30];
-      } else if (slotIndex === this.hours.length - 2) {
+      } else if (slotIndex === this.hours.length - 2
+
+      ) {
         // Przedostatni slot: 30 lub 60 minut dostępne
         this.availableDurations = [30, 60];
       } else {
@@ -78,6 +81,21 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
     }
   }
 
+  nextTimeSlot(time:string): string {
+    let [hour , minutes] = time.split(':').map(Number);
+    if (minutes === 30) {
+      hour++;
+      minutes = 0;
+    } else {
+      minutes = 30;
+    }
+    let hourString = hour.toString().padStart(2, '0');
+    let minutesString = minutes.toString().padEnd(2, '0');
+    let nextTime = `${hourString}:${minutesString}`;
+    console.log (nextTime);
+    return nextTime;
+
+  }
 
   updateEndTime(): void {
     console.log('starttime' + this.newAppointment.startTime);
@@ -106,38 +124,65 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
     }
   }
   
- // Zapisz rezerwację
+//  // Zapisz rezerwację
+//  submitReservation(): void {
+//   this.updateEndTime();
+//   console.log(this.newAppointment.endTime);
+//     // Sprawdź konflikt dla wybranego dnia i przedziału czasowego
+  
+//   if (!this.newAppointment.startTime || !this.newAppointment.endTime) {
+//     console.error('Invalid appointment time');
+//     return; // Zablokuj dodanie
+//   }
+
+//   if (this.newAppointment.startTime && this.newAppointment.date) {
+//     const day = new Date(this.newAppointment.date);
+//     // Appointment duration odjęłam 1 ale o chuj tu chodzi tak w ogole UWAGA!!!!
+//     console.log(this.appointmentDuration);
+//     const hasConflict = this.checkConflicts(day, this.newAppointment.startTime, this.appointmentDuration-1);
+
+//     if (hasConflict) {
+//       alert('Conflict detected: The selected slot overlaps with another appointment.');
+//       return; // Zatrzymaj proces rezerwacji
+//     }
+
+//     // Jeśli brak konfliktów, zapisz konsultację
+//     this.scheduleService
+//       .addAppointment(this.newAppointment.doctor_id, this.newAppointment.date, this.newAppointment)
+//       .subscribe(() => {
+//         alert('Appointment reserved successfully!');
+//         this.showDialog = false; // Ukryj dialog
+//         this.resetForm();
+//         this.loadAppointments(); // Odśwież harmonogram
+//       });
+//   }
+// }
+
+ // Zapisanie rezerwacji
  submitReservation(): void {
   this.updateEndTime();
-  console.log(this.newAppointment.endTime);
-    // Sprawdź konflikt dla wybranego dnia i przedziału czasowego
-  
+
   if (!this.newAppointment.startTime || !this.newAppointment.endTime) {
-    console.error('Invalid appointment time');
-    return; // Zablokuj dodanie
+    alert('Invalid appointment time');
+    return;
   }
 
-  if (this.newAppointment.startTime && this.newAppointment.date) {
-    const day = new Date(this.newAppointment.date);
-    // Appointment duration odjęłam 1 ale o chuj tu chodzi tak w ogole UWAGA!!!!
-    console.log(this.appointmentDuration);
-    const hasConflict = this.checkConflicts(day, this.newAppointment.startTime, this.appointmentDuration-1);
+  const day = new Date(this.newAppointment.date);
+  const hasConflict = this.checkConflicts(day, this.newAppointment.startTime, this.appointmentDuration);
 
-    if (hasConflict) {
-      alert('Conflict detected: The selected slot overlaps with another appointment.');
-      return; // Zatrzymaj proces rezerwacji
-    }
-
-    // Jeśli brak konfliktów, zapisz konsultację
-    this.scheduleService
-      .addAppointment(this.newAppointment.doctor_id, this.newAppointment.date, this.newAppointment)
-      .subscribe(() => {
-        alert('Appointment reserved successfully!');
-        this.showDialog = false; // Ukryj dialog
-        this.resetForm();
-        this.loadAppointments(); // Odśwież harmonogram
-      });
+  if (hasConflict) {
+    alert('Conflict detected: The selected slot overlaps with another appointment.');
+    return;
   }
+
+  this.scheduleService
+    .addAppointment(this.newAppointment)
+    .subscribe(() => {
+      alert('Appointment reserved successfully!');
+      this.showDialog = false;
+      this.resetForm();
+      this.loadAppointments();
+    });
 }
 
 // Resetuj formularz
@@ -157,42 +202,35 @@ resetForm(): void {
     patient_name: '',
   };
 }
+// Anulowanie wizyty
 cancelAppointment(): void {
-  if (this.hoveredAppointment) {
-    if (this.hoveredAppointment.patient_id !== this.patient_id) {
-      alert('You can only cancel your own appointments.');
-      return;
-    }
-
+  if (this.hoveredAppointment && this.hoveredAppointment.patient_id === this.patient_id) {
     if (confirm('Are you sure you want to cancel this appointment?')) {
       this.scheduleService
-        .removeAppointment(
-          this.hoveredAppointment.doctor_id,
-          this.hoveredAppointment.date,
-          this.hoveredAppointment.id! // ID z hoveredAppointment
-        )
+        .removeAppointment(this.hoveredAppointment.id!)
         .subscribe((success) => {
           if (success) {
             alert('Appointment canceled successfully.');
-            this.loadAppointments(); // Odśwież harmonogram
+            this.loadAppointments();
           } else {
             alert('Failed to cancel the appointment.');
           }
         });
     }
+  } else {
+    alert('You can only cancel your own appointments.');
   }
 }
 
+// Nadpisanie `onHover` dla pacjenta
 override onHover(day: Date, time: string): void {
   const dayKey = day.toISOString().split('T')[0];
-  if (this.schedule[dayKey]) {
-    this.hoveredAppointment = this.schedule[dayKey].find(
-      (appointment) =>
-        appointment.startTime === time && appointment.status === 'reserved'
-    ) || null;
-  } else {
-    this.hoveredAppointment = null;
-  }
+  this.hoveredAppointment = this.appointments.find(
+    (appointment) =>
+      appointment.date === dayKey &&
+      appointment.startTime === time &&
+      appointment.status === 'reserved'
+  ) || null;
 }
 
 

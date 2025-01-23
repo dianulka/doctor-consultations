@@ -2,13 +2,13 @@
     <h1>Your Appointments</h1>
   
     <!-- Jeśli lista wizyt jest pusta -->
-    <div *ngIf="patientAppointements.length === 0" class="empty-basket">
+    <div *ngIf="patientAppointments.length === 0" class="empty-basket">
       <p>You have no reserved consultations.</p>
     </div>
   
     <!-- Lista wizyt -->
-    <div *ngIf="patientAppointements.length > 0" class="appointments-list">
-      <div *ngFor="let appointment of patientAppointements" class="appointment-item">
+    <div *ngIf="patientAppointments.length > 0" class="appointments-list">
+      <div *ngFor="let appointment of patientAppointments" class="appointment-item">
         <h3>{{ appointment.type }}</h3>
         <p>Date: {{ appointment.date }}</p>
         <p>Time: {{ appointment.startTime }} - {{ appointment.endTime }}</p>
@@ -21,7 +21,7 @@
     </div>
   
     <!-- Sekcja symulacji płatności -->
-    <div class="payment-section" *ngIf="patientAppointements.length > 0">
+    <div class="payment-section" *ngIf="patientAppointments.length > 0">
       <h2>Simulate Payment</h2>
       <button class="pay-btn" (click)="simulatePayment()">Pay for Appointments</button>
       <p *ngIf="paymentSuccess" class="payment-success">Payment successful! Thank you.</p>

@@ -5,9 +5,12 @@ import { DoctorsAvailabilityComponent } from './components/doctors-availability/
 import { DoctorsAbsenceComponent } from './components/doctors-absence/doctors-absence.component';
 import { PatientCalendarComponent } from './components/patient-calendar/patient-calendar.component';
 import { BasketComponent } from './components/basket/basket.component';
+import { LoginComponent } from './components/auth/login/login.component';
+import { RegisterComponent } from './components/auth/register/register.component';
 export const routes: Routes = [
     { path: '', component: LandingPageComponent },
-
+    { path: 'login', component: LoginComponent },
+    {path: 'register', component: RegisterComponent},
     {path: 'doctor', 
         
     children: [
@@ -36,7 +39,7 @@ export const routes: Routes = [
           
           // Nowy routing dla PatientCalendarComponent
           { 
-            path: 'calendar/:doctorId', 
+            path: 'calendar', 
             component: PatientCalendarComponent 
           },
           {
