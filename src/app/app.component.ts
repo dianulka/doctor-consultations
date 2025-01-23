@@ -9,14 +9,21 @@ import { AppointmentDialogComponent } from './components/appointment-dialog/appo
 import { BaseCalendarComponent } from './components/base-calendar/base-calendar.component';
 import { PatientCalendarComponent } from './components/patient-calendar/patient-calendar.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { AuthFirebaseService } from './services/firebase/auth-firebase.service';
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, DoctorCalendarComponent, DoctorsAvailabilityComponent, DoctorsAbsenceComponent,
-    BasketComponent,AppointmentDialogComponent, BaseCalendarComponent, PatientCalendarComponent,RegisterComponent],
+    BasketComponent,AppointmentDialogComponent, BaseCalendarComponent, PatientCalendarComponent,RegisterComponent,
+     ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'doctor-consultations';
+  constructor(private authService: AuthFirebaseService) {}
+
+  ngOnInit() {
+    this.authService.initializeCurrentUser();
+  }
 }

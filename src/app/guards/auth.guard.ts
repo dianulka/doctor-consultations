@@ -20,15 +20,19 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> {
     return this.authService.getCurrentUser().pipe(
-      take(1), // Pobieramy tylko jedną wartość (pojedyncza subskrypcja)
+      take(1),
       map((user) => {
+        console.log('Sprawdzanie użytkownika w AuthGuard:', user);
+
         if (!user) {
+          console.warn('Brak zalogowanego użytkownika, przekierowanie na /login');
           this.router.navigate(['/login']);
           return false;
         }
 
         const expectedRole = route.data['role'];
         if (user.role !== expectedRole) {
+          console.warn('Niewłaściwa rola użytkownika, przekierowanie na /not-authorized');
           this.router.navigate(['/not-authorized']);
           return false;
         }
