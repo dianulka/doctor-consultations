@@ -13,7 +13,7 @@ export class AvailabilityService {
       type: 'cyclic',
       startDate: '2025-02-01',
       endDate: '2025-03-12',
-      daysOfWeek: ['Mon', 'Wed', 'Fri'], // Przykładowe dni tygodnia
+      daysOfWeek: ['Mon', 'Wed', 'Fri'], 
       timeRanges: [
         { start: '08:30', end: '09:00' },
         { start: '09:00', end: '09:30' },
@@ -34,7 +34,7 @@ export class AvailabilityService {
       type: 'cyclic',
       startDate: '2025-01-07',
       endDate: '2025-01-18',
-      daysOfWeek: ['Mon', 'Tue', 'Wed','Thu', 'Fri'], // Przykładowe dni tygodnia
+      daysOfWeek: ['Mon', 'Tue', 'Wed','Thu', 'Fri'], 
       timeRanges: [
         { start: '08:00', end: '14:00' },
       ],
@@ -60,18 +60,12 @@ export class AvailabilityService {
       doctor_id: '0'
     },
 
-    // {
-    //   id:3,
-    //   type: 'cyclic',
-    //   startDate: '2025-01-19',
-    //   endDate:
-
-    // }
-  ]; // Przechowuje dostępności
+  
+  ]; 
 
   constructor() {}
 
-  // Dodaj dostępność
+  
   addAvailability(availability: Availability): Observable<boolean> {
     availability.id = '4';
     this.availabilities.push(availability);
@@ -79,7 +73,7 @@ export class AvailabilityService {
     return of(true);
   }
 
-  // Pobierz wszystkie dostępności
+  
   getAvailabilities(): Observable<Availability[]> {
     return of(this.availabilities);
   }

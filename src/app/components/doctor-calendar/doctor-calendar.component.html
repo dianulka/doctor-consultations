@@ -1,40 +1,45 @@
-<div class="navigation">
-  <!-- Obsługa Previous -->
-  <button (click)="previous()">
-    {{ currentView === 'week' ? 'Previous Week' : 'Previous Day' }}
-  </button>
+<div class="calendar-container">
+  <div class="navigation">
+    <button class="back-button" routerLink ="/doctor-dashboard">Back to Dashboard</button>
+    <!-- Obsługa Previous -->
+    <button (click)="previous()" class="nav-button">
+      {{ currentView === 'week' ? 'Previous Week' : 'Previous Day' }}
+    </button>
 
-  <!-- Nagłówek widoku -->
-  <span *ngIf="currentView === 'week'">
-    {{ monthDays[0] | date: 'MMM d, y' }} - {{ monthDays[6] | date: 'MMM d, y' }}
-  </span>
-  <span *ngIf="currentView === 'day'">
-    {{ viewDate | date: 'EEE, MMM d, y' }}
-  </span>
+    <!-- Nagłówek widoku -->
+    <span class="view-header" *ngIf="currentView === 'week'">
+      {{ monthDays[0] | date: 'MMM d, y' }} - {{ monthDays[6] | date: 'MMM d, y' }}
+    </span>
+    <span class="view-header" *ngIf="currentView === 'day'">
+      {{ viewDate | date: 'EEE, MMM d, y' }}
+    </span>
 
-  <!-- Obsługa Next -->
-  <button (click)="next()">
-    {{ currentView === 'week' ? 'Next Week' : 'Next Day' }}
-  </button>
+    <!-- Obsługa Next -->
+    <button (click)="next()" class="nav-button">
+      {{ currentView === 'week' ? 'Next Week' : 'Next Day' }}
+    </button>
 
-  <!-- Przyciski przełączania widoków -->
-  <button (click)="switchToView(CalendarView.Week)">Week View</button>
-  <button (click)="switchToView(CalendarView.Day)">Day View</button>
-</div>
+    <!-- Przyciski przełączania widoków -->
+    <div class="view-buttons">
+      <button (click)="switchToView(CalendarView.Week)" class="view-toggle">Week View</button>
+      <button (click)="switchToView(CalendarView.Day)" class="view-toggle">Day View</button>
+    </div>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Time</th>
-      <th *ngFor="let day of monthDays">{{ day | date: 'EEE, MMM d' }}
-        <p>{{ countAppointments(day) }} appointments</p>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let time of hours">
-      <td>{{ time }}</td>
-      <td *ngFor="let day of monthDays"
+  <table class="calendar-table">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th *ngFor="let day of monthDays">{{ day | date: 'EEE, MMM d' }}
+          <p class="appointments-count">{{ countAppointments(day) }} appointments</p>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let time of hours">
+        <td>{{ time }}</td>
+        <td
+          *ngFor="let day of monthDays"
           [ngClass]="{
             'reserved': isSlotReserved(day, time),
             'past': isPastSlot(day, time),
@@ -42,18 +47,18 @@
             'absence': isAbsence(day)
           }"
           (click)="selectSlot(day, time)"
-          (mouseover)="onHover(day, time)"
-          (mouseleave)="onLeave()">
-        <div *ngIf="isSlotReserved(day, time) && isAvailable(day, time)">Reserved</div>
-        <div *ngIf="isAvailable(day, time) && !isSlotReserved(day, time) && !isAbsence(day)">Available</div>
-        
-      </td>
-    </tr>
-  </tbody>
-</table>
+          (mouseover)="showDetails($event, day, time)"
+          (mouseleave)="hideDetails()"
+        >
+          <div *ngIf="isSlotReserved(day, time) && isAvailable(day, time)">Reserved</div>
+          <div *ngIf="isAvailable(day, time) && !isSlotReserved(day, time) && !isAbsence(day)">Available</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-  
-  <div class="appointment-details" *ngIf="hoveredAppointment">
+  <!-- Szczegóły wizyty -->
+  <div class="appointment-details" *ngIf="hoveredAppointment" [style.top.px]="detailsPosition.y" [style.left.px]="detailsPosition.x">
     <h4>Appointment Details</h4>
     <p><strong>Type:</strong> {{ hoveredAppointment.type }}</p>
     <p><strong>Time:</strong> {{ hoveredAppointment.startTime }} - {{ hoveredAppointment.endTime }}</p>
@@ -66,3 +71,4 @@
     <p><strong>Patient gender:</strong> {{hoveredAppointment.patient_gender}}</p>
     <p><strong>Appointment ID:</strong> {{hoveredAppointment.id}}</p>
   </div>
+</div>

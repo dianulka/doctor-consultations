@@ -1,0 +1,104 @@
+<div class="register-doctor-container">
+    <h2>Register Doctor</h2>
+  
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="Enter doctor's email"
+        />
+        <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="error">
+          Please provide a valid email address.
+        </div>
+      </div>
+  
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          class="form-control"
+          formControlName="username"
+          placeholder="Enter username"
+        />
+        <div *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid" class="error">
+          Username must be at least 3 characters long.
+        </div>
+      </div>
+  
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          formControlName="password"
+          placeholder="Enter password"
+        />
+        <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error">
+          Password must be at least 6 characters long.
+        </div>
+      </div>
+  
+      <!-- First Name -->
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input
+          id="firstName"
+          type="text"
+          class="form-control"
+          formControlName="firstName"
+          placeholder="Enter first name"
+        />
+      </div>
+  
+      <!-- Last Name -->
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input
+          id="lastName"
+          type="text"
+          class="form-control"
+          formControlName="lastName"
+          placeholder="Enter last name"
+        />
+      </div>
+  
+      <!-- Specialization -->
+      <div class="form-group">
+        <label for="specialization">Specialization</label>
+        <input
+          id="specialization"
+          type="text"
+          class="form-control"
+          formControlName="specialization"
+          placeholder="Enter specialization"
+        />
+      </div>
+  
+      <!-- Submit Button -->
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading || registerForm.invalid">
+          {{ isLoading ? 'Registering...' : 'Register Doctor' }}
+        </button>
+      </div>
+    </form>
+  
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="success">
+      {{ successMessage }}
+    </div>
+  
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+  </div>
+  

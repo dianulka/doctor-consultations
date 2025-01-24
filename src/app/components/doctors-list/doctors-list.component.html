@@ -1,0 +1,23 @@
+<div class="doctor-list">
+  <h2 class="doctor-list-title">Our Specialists</h2>
+  <ul class="doctor-list-container">
+    <li class="doctor-list-item" *ngFor="let doctor of doctors">
+      <div class="doctor-card">
+        
+        <div class="doctor-details">
+          <h3 class="doctor-name">
+            Doctor {{ doctor.profile?.firstName }} {{ doctor.profile?.lastName }}
+          </h3>
+          
+          <button
+            *ngIf="isLoggedIn"
+            class="schedule-button"
+            (click)="viewSchedule(doctor.id)"
+          >
+            View Schedule
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

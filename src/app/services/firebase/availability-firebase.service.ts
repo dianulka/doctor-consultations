@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { inject } from '@angular/core';
-import { Firestore, collection,collectionData,addDoc,onSnapshot } from '@angular/fire/firestore';
+import { Firestore, collection,collectionData,addDoc,onSnapshot,where,query } from '@angular/fire/firestore';
 import { Observable ,from} from 'rxjs';
 import { Availability } from '../../models/availability';
 
@@ -42,5 +42,22 @@ export class AvailabilityFirebaseService {
   
         return { unsubscribe };
       });
+    }
+
+    getAvailabilitiesRealtimeForDoctor(doctorId: string) : Observable<Availability[]> {
+      const q = query(this.availabilityCollection, where('doctor_id', '==', doctorId));
+
+      return new Observable((observer) => {
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+              const absences = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+              } as Availability));
+      
+              observer.next(absences);
+            });
+      
+            return { unsubscribe };
+          });
     }
 }

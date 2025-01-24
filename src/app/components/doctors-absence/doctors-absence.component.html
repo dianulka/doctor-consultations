@@ -1,14 +1,30 @@
-<div>
-    <h2>Define Absences</h2>
-  
-    <label>Date:</label>
-    <input type="date" [(ngModel)]="newAbsence.date" />
-  
-    <label>Reason (optional):</label>
-    <input type="text" [(ngModel)]="newAbsence.reason" />
-  
-    <button (click)="addAbsence()">Add Absence</button>
-  
+<div class="absence-container">
+  <h2>Define Absences</h2>
+
+  <!-- Absence Date -->
+  <div class="form-group">
+    <label for="absence-date">Date:</label>
+    <input id="absence-date" type="date" [(ngModel)]="newAbsence.date" />
+  </div>
+
+  <!-- Absence Reason -->
+  <div class="form-group">
+    <label for="absence-reason">Reason (optional):</label>
+    <input id="absence-reason" type="text" [(ngModel)]="newAbsence.reason" placeholder="Enter reason (optional)" />
+  </div>
+
+  <!-- Add Absence Button -->
+  <div class="form-group">
+    <button class="btn btn-primary" (click)="addAbsence()">Add Absence</button>
+  </div>
+
+  <!-- Back to Dashboard Button -->
+  <div class="form-group">
+    <button class="btn btn-secondary" routerLink="/doctor-dashboard">Back to Dashboard</button>
+  </div>
+
+  <!-- List of Absences -->
+  <div class="absence-list">
     <h3>Your Absences</h3>
     <ul>
       <li *ngFor="let absence of absences">
@@ -17,4 +33,4 @@
       </li>
     </ul>
   </div>
-  
+</div>

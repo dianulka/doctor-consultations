@@ -6,7 +6,7 @@ import {
   Router,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, take, filter } from 'rxjs/operators';
 import { AuthFirebaseService } from '../services/firebase/auth-firebase.service';
 
 @Injectable({
@@ -20,20 +20,15 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> {
     return this.authService.getCurrentUser().pipe(
+      filter((user) => user !== null),
       take(1),
       map((user) => {
-        console.log('Sprawdzanie użytkownika w AuthGuard:', user);
-
-        if (!user) {
-          console.warn('Brak zalogowanego użytkownika, przekierowanie na /login');
-          this.router.navigate(['/login']);
-          return false;
-        }
+        console.log('sprawdzanie użytkownika w AuthGuard:', user);
 
         const expectedRole = route.data['role'];
-        if (user.role !== expectedRole) {
-          console.warn('Niewłaściwa rola użytkownika, przekierowanie na /not-authorized');
-          this.router.navigate(['/not-authorized']);
+        if (user?.role !== expectedRole) {
+          console.warn('Niewłaściwa rola użytkownika');
+          this.router.navigate(['/']);
           return false;
         }
 

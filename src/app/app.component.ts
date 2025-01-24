@@ -5,7 +5,6 @@ import { DoctorCalendarComponent } from './components/doctor-calendar/doctor-cal
 import { DoctorsAvailabilityComponent } from './components/doctors-availability/doctors-availability.component';
 import { DoctorsAbsenceComponent } from './components/doctors-absence/doctors-absence.component';
 import { BasketComponent } from './components/basket/basket.component';
-import { AppointmentDialogComponent } from './components/appointment-dialog/appointment-dialog.component';
 import { BaseCalendarComponent } from './components/base-calendar/base-calendar.component';
 import { PatientCalendarComponent } from './components/patient-calendar/patient-calendar.component';
 import { RegisterComponent } from './components/auth/register/register.component';
@@ -14,7 +13,7 @@ import { AuthFirebaseService } from './services/firebase/auth-firebase.service';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, DoctorCalendarComponent, DoctorsAvailabilityComponent, DoctorsAbsenceComponent,
-    BasketComponent,AppointmentDialogComponent, BaseCalendarComponent, PatientCalendarComponent,RegisterComponent,
+    BasketComponent, BaseCalendarComponent, PatientCalendarComponent,RegisterComponent,
      ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
@@ -23,7 +22,5 @@ export class AppComponent {
   title = 'doctor-consultations';
   constructor(private authService: AuthFirebaseService) {}
 
-  ngOnInit() {
-    this.authService.initializeCurrentUser();
-  }
+  
 }

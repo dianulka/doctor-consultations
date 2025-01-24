@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class DoctorDashboardComponent {
   doctorData: User | null = null;
   doctorProfile: DoctorProfile | null = null;
+  
   constructor(
     private authService: AuthFirebaseService,
     private router: Router
@@ -51,7 +52,7 @@ export class DoctorDashboardComponent {
 
   logout() {
     this.authService.logout().subscribe(() => {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/']);
     });
   }
 }

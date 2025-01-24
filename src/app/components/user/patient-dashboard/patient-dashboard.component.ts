@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { User } from '../../../models/user';
+import { PatientProfile, User } from '../../../models/user';
 //import { UserService } from '../../../services/firebase/user.service';
+import { AuthFirebaseService } from '../../../services/firebase/auth-firebase.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-patient-dashboard',
   standalone: true,
@@ -9,13 +11,44 @@ import { User } from '../../../models/user';
   styleUrl: './patient-dashboard.component.css'
 })
 export class PatientDashboardComponent {
-  user: User | null = null;
+  patientData: User | null = null;
+  patientProfile: PatientProfile | null = null;
 
-  // /constructor(private userService: UserService) {}
+  constructor(
+      private authService: AuthFirebaseService,
+      private router: Router
+    ) {}
 
-  // ngOnInit(): void {
-  //   this.userService.getUser().subscribe((user) => {
-  //     this.user = user;
-  //   });
-  // }
+  ngOnInit(): void {
+      this.authService.getCurrentUser().subscribe((user) => {
+        if (user?.role === 'Patient') {
+          this.patientData = user;
+          this.patientProfile = user.profile as PatientProfile; 
+  
+        } else {
+          this.router.navigate(['/not-authorized']);
+        }
+      });
+    }
+
+    viewDoctors() {
+      this.router.navigate(['/doctors-list'], {
+        queryParams: { doctor_id: this.patientData?.id },
+      });
+    }
+
+    viewBasket(){
+      this.router.navigate(['patient/basket'], {
+        queryParams: { patient_id: this.patientData?.id },
+      });
+      
+    }
+
+    logout() {
+      this.authService.logout().subscribe(() => {
+        this.router.navigate(['/']);
+      });
+    }
+
+
 }

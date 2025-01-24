@@ -1,35 +1,38 @@
-<div class="navigation">
-    <!-- Obsługa Previous -->
-    <button (click)="previous()">
+<div class="patient-calendar-container">
+  <h1>Patient Calendar</h1>
+
+  <!-- Nawigacja -->
+  <div class="navigation">
+    <button class="nav-btn" (click)="previous()">
       {{ currentView === 'week' ? 'Previous Week' : 'Previous Day' }}
     </button>
-  
-    <!-- Nagłówek widoku -->
-    <span *ngIf="currentView === 'week'">
+
+    <span class="view-header" *ngIf="currentView === 'week'">
       {{ monthDays[0] | date: 'MMM d, y' }} - {{ monthDays[6] | date: 'MMM d, y' }}
     </span>
-    <span *ngIf="currentView === 'day'">
+    <span class="view-header" *ngIf="currentView === 'day'">
       {{ viewDate | date: 'EEE, MMM d, y' }}
     </span>
-  
-    <!-- Obsługa Next -->
-    <button (click)="next()">
+
+    <button class="nav-btn" (click)="next()">
       {{ currentView === 'week' ? 'Next Week' : 'Next Day' }}
     </button>
-  
-    <!-- Przyciski przełączania widoków -->
-    <button (click)="switchToView(CalendarView.Week)">Week View</button>
-    <button (click)="switchToView(CalendarView.Day)">Day View</button>
 
-    <button (click)="reserveAnAppointment()"> Reserve a consultation</button>
+    <div class="view-buttons">
+      <button class="view-btn" (click)="switchToView(CalendarView.Week)">Week View</button>
+      <button class="view-btn" (click)="switchToView(CalendarView.Day)">Day View</button>
+    </div>
+
+    <button class="reserve-btn" (click)="reserveAnAppointment()">Reserve a Consultation</button>
   </div>
-  
-  <table>
+
+  <!-- Tabela kalendarza -->
+  <table class="calendar-table">
     <thead>
       <tr>
         <th>Time</th>
         <th *ngFor="let day of monthDays">{{ day | date: 'EEE, MMM d' }}
-          <p>{{ countAppointments(day) }} appointments</p>
+          <p class="appointment-count">{{ countAppointments(day) }} appointments</p>
         </th>
       </tr>
     </thead>
@@ -48,33 +51,29 @@
             (mouseleave)="onLeave()">
           <div *ngIf="isSlotReserved(day, time) && isAvailable(day, time)">Reserved</div>
           <div *ngIf="isAvailable(day, time) && !isSlotReserved(day, time) && !isAbsence(day)">Available</div>
-          
         </td>
       </tr>
     </tbody>
   </table>
 
+  <!-- Dialog rezerwacji -->
   <div class="dialog-overlay" *ngIf="showDialog">
     <div class="dialog-content">
       <h2>Reserve Consultation</h2>
-      
-      <!-- Data wizyty -->
+
       <label>Date:</label>
       <input type="date" [(ngModel)]="newAppointment.date" disabled />
-  
-      <!-- Godzina rozpoczęcia -->
+
       <label>Start Time:</label>
       <input type="time" [(ngModel)]="newAppointment.startTime" disabled />
-  
-      <!-- Długość konsultacji -->
+
       <label>Duration (minutes):</label>
       <select [(ngModel)]="appointmentDuration">
         <option *ngFor="let duration of availableDurations" [value]="duration">
           {{ duration }} minutes
         </option>
       </select>
-  
-      <!-- Typ konsultacji -->
+
       <label>Type of Consultation:</label>
       <select [(ngModel)]="newAppointment.type">
         <option value="Initial Visit">Initial Visit</option>
@@ -82,36 +81,38 @@
         <option value="Chronic Illness">Chronic Illness</option>
         <option value="Prescription">Prescription</option>
       </select>
-  
-      <!-- Dane pacjenta -->
+
       <label>Patient Name:</label>
       <input type="text" [(ngModel)]="newAppointment.patient_name" />
-  
+
       <label>Patient Gender:</label>
       <select [(ngModel)]="newAppointment.patient_gender">
         <option value="Male">Male</option>
         <option value="Female">Female</option>
         <option value="Other">Other</option>
       </select>
-  
+
       <label>Patient Age:</label>
       <input type="number" [(ngModel)]="newAppointment.patient_age" />
-  
-      <!-- Notatki dla lekarza -->
+
       <label>Notes for Doctor:</label>
       <textarea [(ngModel)]="newAppointment.notes"></textarea>
-  
+
       <div class="dialog-buttons">
         <button (click)="submitReservation()">Submit</button>
         <button (click)="cancelDialog()">Cancel</button>
       </div>
     </div>
   </div>
-  
-  <div *ngIf="hoveredAppointment && hoveredAppointment.patient_id === patient_id">
+
+  <!-- Szczegóły wizyty -->
+  <div class="appointment-details" *ngIf="hoveredAppointment && hoveredAppointment.patient_id === patientId">
     <h3>Consultation Details</h3>
-    
-    
     <button (click)="cancelAppointment()">Cancel Appointment</button>
   </div>
-  
+
+  <!-- Przycisk powrotu -->
+  <div class="back-button">
+    <button routerLink="/patient-dashboard">Back to Dashboard</button>
+  </div>
+</div>

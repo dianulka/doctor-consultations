@@ -18,7 +18,7 @@ export class AbsenceService {
     // {
     //   id:4,
     //   date: '2025-01-21',
-    //   reason: 'Huje',
+    //   reason: 'huurf',
     //   doctor_id: '0'
     // },
     // {
@@ -37,19 +37,16 @@ export class AbsenceService {
 
   constructor() {}
 
-  // Dodaj termin nieobecności
   addAbsence(absence: Absence): Observable<boolean> {
     this.absences.push(absence);
     console.log(this.absences);
     return of(true);
   }
 
-  // Pobierz wszystkie nieobecności
   getAbsences(): Observable<Absence[]> {
     return of(this.absences);
   }
 
-  // Sprawdź konflikty z wizytami
   handleConflictsWithAppointments(
     appointments: Appointment[]
   ): Observable<Appointment[]> {
@@ -58,11 +55,11 @@ export class AbsenceService {
 
       appointments.forEach((appointment) => {
         if (appointment.date === conflictDate) {
-          appointment.status = 'canceled'; // Oznacz wizytę jako odwołaną
+          appointment.status = 'canceled';
         }
       });
     });
 
-    return of(appointments); // Zwróć zaktualizowane wizyty
+    return of(appointments);
   }
 }

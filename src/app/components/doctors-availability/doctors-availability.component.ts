@@ -6,13 +6,13 @@ import { FormsModule, NgModel } from '@angular/forms';
 import { AvailabilityService } from '../../services/availability.service';
 
 import { AvailabilityFirebaseService } from '../../services/firebase/availability-firebase.service';
-
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-doctors-availability',
   standalone: true,
   imports: [
-    CommonModule, FormsModule
+    CommonModule, FormsModule,RouterModule
   ],
   templateUrl: './doctors-availability.component.html',
   styleUrl: './doctors-availability.component.css'
@@ -20,51 +20,64 @@ import { AvailabilityFirebaseService } from '../../services/firebase/availabilit
 export class DoctorsAvailabilityComponent {
   currentView: 'cyclic' | 'one-time' = 'cyclic';
 
-  doctor_id:string = '0';
+  doctorId:string = '';
   newAvailability: Availability = {
     type: this.currentView,
     startDate: '',
     endDate: '',
     daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     timeRanges: [],
-    doctor_id: this.doctor_id
+    doctor_id: this.doctorId
   };
   allAvailabilities: Availability[] = [];
-  availableTimes: string[] = []; // Lista dostępnych godzin
+  availableTimes: string[] = []; 
 
   
 
   // constructor(private availabilityService: AvailabilityService) {}
-  constructor(private availabilityService: AvailabilityFirebaseService) {}
+  constructor(private availabilityService: AvailabilityFirebaseService,private route: ActivatedRoute) {}
 
+ 
+  
   ngOnInit(): void {
-    this.loadAvailabilities();
-    this.generateAvailableTimes(); // Generowanie dostępnych godzin
+    this.generateAvailableTimes();
+    this.route.queryParams.subscribe((params) => {
+      this.doctorId = params['doctor_id']; // Pobieranie doctorId z queryParams
+      if (this.doctorId) {
+        //this.loadAvailabilities();
+        //this.loadAbsences();
+        //this.loadAppointments();
+        console.log('DoctorID availability' + this.doctorId);
+        this.loadAvailabilities();
+        this.newAvailability.doctor_id = this.doctorId;
+
+      } else {
+        console.error('doctorId is missing in queryParams');
+      }
+    });
+    
   }
 
-  // Pobierz dostępności
   loadAvailabilities(): void {
     this.availabilityService.getAvailabilities().subscribe((availabilities) => {
       this.allAvailabilities = availabilities;
     });
   }
 
-  // Dodaj nową dostępność
   addAvailability(): void {
 
     if (!this.newAvailability.timeRanges || this.newAvailability.timeRanges.length === 0) {
-      this.newAvailability.timeRanges = this.generateDefaultTimeRanges(); // Domyślne godziny
+      this.newAvailability.timeRanges = this.generateDefaultTimeRanges(); 
     }
   
     this.availabilityService.addAvailability(this.newAvailability).subscribe(() => {
-      this.loadAvailabilities(); // Odśwież dostępności
-      this.resetForm(); // Wyczyść formularz
+      this.loadAvailabilities();
+      this.resetForm(); 
     });
   }
   
   
 
-  // Resetuj formularz
   resetForm(): void {
     this.newAvailability = {
       type: this.currentView,
@@ -72,16 +85,14 @@ export class DoctorsAvailabilityComponent {
       endDate: '',
       daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       timeRanges: [],
-      doctor_id: this.doctor_id
+      doctor_id: this.doctorId
     };
   }
 
-  // Dodaj przedział czasowy
   addTimeRange(): void {
     this.newAvailability.timeRanges.push({ start: '', end: '' });
   }
 
-  // Usuń przedział czasowy
   removeTimeRange(index: number): void {
     this.newAvailability.timeRanges.splice(index, 1);
   }
@@ -90,22 +101,20 @@ export class DoctorsAvailabilityComponent {
     return [{ start: '08:00', end: '14:00' }];
   }
 
-  // Zarządzanie wyborem dni tygodnia
   toggleDaySelection(day: string): void {
     if (!this.newAvailability.daysOfWeek) {
-      this.newAvailability.daysOfWeek = []; // Inicjalizacja, jeśli jest undefined
+      this.newAvailability.daysOfWeek = []; 
     }
   
     const index = this.newAvailability.daysOfWeek.indexOf(day);
     if (index > -1) {
-      this.newAvailability.daysOfWeek.splice(index, 1); // Usuń dzień, jeśli istnieje
+      this.newAvailability.daysOfWeek.splice(index, 1);
     } else {
-      this.newAvailability.daysOfWeek.push(day); // Dodaj dzień, jeśli go nie ma
+      this.newAvailability.daysOfWeek.push(day);
     }
   }
   
 
-  // Generowanie dostępnych godzin od 8:00 do 15:00 co 30 minut
   generateAvailableTimes(): void {
     const startHour = 8;
     const endHour = 14;

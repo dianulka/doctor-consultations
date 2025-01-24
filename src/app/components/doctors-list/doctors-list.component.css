@@ -1,0 +1,93 @@
+/* Stylizacja kontenera listy lekarzy */
+.doctor-list {
+    padding: 40px 10%;
+    
+  }
+  
+  .doctor-list-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 30px;
+  }
+  
+  /* Lista lekarzy */
+  .doctor-list-container {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  /* Pojedynczy element listy */
+  .doctor-list-item {
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .doctor-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .doctor-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Zdjęcie lekarza */
+  .doctor-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background-color: #ddd;
+  }
+  
+  /* Informacje o lekarzu */
+  .doctor-details {
+    padding: 20px;
+  }
+  
+  .doctor-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .doctor-specialization {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  /* Przyciski */
+  .schedule-button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .schedule-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+  }
+  
