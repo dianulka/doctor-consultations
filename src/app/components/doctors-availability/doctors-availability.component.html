@@ -1,59 +1,61 @@
-<div>
+<div class="availability-container">
   <h2>Define Your Availability</h2>
 
-  <!-- Typ dostępności -->
-  <label>
-    <input
-      type="radio"
-      name="availabilityType"
-      value="cyclic"
-      [(ngModel)]="currentView"
-    />
-    Cyclic
-  </label>
-  <label>
-    <input
-      type="radio"
-      name="availabilityType"
-      value="one-time"
-      [(ngModel)]="currentView"
-    />
-    One-time
-  </label>
+  <!-- Availability Type -->
+  <div class="availability-type">
+    <label>
+      <input
+        type="radio"
+        name="availabilityType"
+        value="cyclic"
+        [(ngModel)]="currentView"
+      />
+      Cyclic
+    </label>
+    <label>
+      <input
+        type="radio"
+        name="availabilityType"
+        value="one-time"
+        [(ngModel)]="currentView"
+      />
+      One-time
+    </label>
+  </div>
 
-  <!-- Zakres dat -->
-  <div *ngIf="currentView === 'cyclic'">
+  <!-- Cyclic Availability -->
+  <div *ngIf="currentView === 'cyclic'" class="availability-section">
     <label>Start Date:</label>
     <input type="date" [(ngModel)]="newAvailability.startDate" />
 
     <label>End Date:</label>
     <input type="date" [(ngModel)]="newAvailability.endDate" />
 
-    <!-- Maski dni -->
+    <!-- Days of Week -->
     <label>Days of Week:</label>
-    <div>
+    <div class="days-of-week">
       <label *ngFor="let day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']">
         <input
           type="checkbox"
           [value]="day"
           [checked]="newAvailability.daysOfWeek?.includes(day)"
           (change)="toggleDaySelection(day)"
-          
         />
         {{ day }}
       </label>
     </div>
   </div>
 
-  <div *ngIf="currentView === 'one-time'">
+  <!-- One-time Availability -->
+  <div *ngIf="currentView === 'one-time'" class="availability-section">
     <label>Date:</label>
     <input type="date" [(ngModel)]="newAvailability.startDate" [(ngModel)]="newAvailability.endDate" />
   </div>
 
-  <!-- Przedziały czasowe -->
-  <div>
+  <!-- Time Ranges -->
+  <div class="time-ranges">
     <h3>Time Ranges</h3>
-    <div *ngFor="let range of newAvailability.timeRanges; let i = index">
+    <div *ngFor="let range of newAvailability.timeRanges; let i = index" class="time-range">
       <label>Start:</label>
       <select [(ngModel)]="range.start">
         <option *ngFor="let time of availableTimes" [value]="time">{{ time }}</option>
@@ -64,31 +66,14 @@
         <option *ngFor="let time of availableTimes" [value]="time">{{ time }}</option>
       </select>
 
-      <button (click)="removeTimeRange(i)">Remove</button>
+      <button class="remove-button" (click)="removeTimeRange(i)">Remove</button>
     </div>
-    <button (click)="addTimeRange()">Add Time Range</button>
+    <button class="add-button" (click)="addTimeRange()">Add Time Range</button>
   </div>
 
-  <button (click)="addAvailability()">Save Availability</button>
+  <!-- Save Button -->
+  <div>
+  <button class="save-button" (click)="addAvailability()">Save Availability</button>
+  <button class="back-button" routerLink ="/doctor-dashboard">Back to Dashboard</button>
+  </div>
 </div>
-
-<!-- Wyświetlenie dostępności -->
-<!-- <div>
-  <h2>Your Availabilities</h2>
-  <div *ngFor="let availability of allAvailabilities">
-    <h3>{{ availability.type | titlecase }} Availability</h3>
-    <p><strong>Start Date:</strong> {{ availability.startDate }}</p>
-    <p *ngIf="availability.type === 'cyclic'">
-      <strong>End Date:</strong> {{ availability.endDate }}
-    </p>
-    <p *ngIf="availability.daysOfWeek">
-      <strong>Days of Week:</strong> {{ availability.daysOfWeek.join(', ') }}
-    </p>
-    <p>
-      <strong>Time Ranges:</strong>
-      <span *ngFor="let range of availability.timeRanges">
-        {{ range.start }} - {{ range.end }}
-      </span>
-    </p>
-  </div>
-</div> -->

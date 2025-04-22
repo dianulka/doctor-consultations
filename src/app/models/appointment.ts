@@ -1,12 +1,12 @@
 export interface Appointment {
-    id?: string; // Unikalny identyfikator wizyty
+    id?: string;
     date: string,
-    startTime: string; // Czas rozpoczęcia (w formacie HH:mm)
-    endTime: string; // Czas zakończenia (w formacie HH:mm)
-    type: string; // Typ wizyty, np. "Consultation"
-    status: string; // Status wizyty, np. "reserved" lub "completed"
-    patient_id: string; // ID pacjenta
-    doctor_id: string; // ID lekarza
+    startTime: string; 
+    endTime: string;
+    type: string; 
+    status: string; 
+    patient_id: string; 
+    doctor_id: string; 
     notes?: string;
     patient_age?: number;
     patient_gender?: string;

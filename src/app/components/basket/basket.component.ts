@@ -1,29 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { ScheduleService } from '../../services/schedule.service';
+//import { ScheduleService } from '../../services/schedule.service';
 import { Appointment } from '../../models/appointment';
 import { CommonModule } from '@angular/common';
 import { ScheduleFirebaseService } from '../../services/firebase/schedule-firebase.service';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-basket',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   templateUrl: './basket.component.html',
   styleUrl: './basket.component.css'
 })
 export class BasketComponent implements OnInit{
-  patient_id: string = '1'; // Identyfikator pacjenta
-  patientAppointments: Appointment[] = []; // Lista wizyt pacjenta
-  paymentSuccess: boolean = false; // Flaga dla sukcesu płatności
+  patientId: string = '1';
+  patientAppointments: Appointment[] = [];
+  paymentSuccess: boolean = false; 
 
-  constructor(private scheduleService: ScheduleFirebaseService) {}
+  constructor(private scheduleService: ScheduleFirebaseService,private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.loadAppointments();
+    //this.loadAppointments();
+    this.route.queryParams.subscribe((params) => {
+      this.patientId = params['patient_id']; // Pobieranie doctorId z queryParams
+      if (this.patientId) {
+
+        this.loadAppointments();
+      } else {
+        console.error('patientID is missing in queryParams');
+      }
+    });
   }
 
   // Ładowanie wizyt pacjenta
   loadAppointments(): void {
-    this.scheduleService.getAppointmentsForPatient(this.patient_id).subscribe((appointments) => {
+    this.scheduleService.getAppointmentsForPatient(this.patientId).subscribe((appointments) => {
       this.patientAppointments = appointments;
     });
   }
@@ -61,20 +71,5 @@ export class BasketComponent implements OnInit{
     });
   }
 
-
-  // Symulacja płatności
-  simulatePayment(): void {
-    if (this.patientAppointments.length > 0) {
-      this.paymentSuccess = true;
-      alert('Payment successful!');
-
-      // Reset komunikatu po 3 sekundach
-      setTimeout(() => {
-        this.paymentSuccess = false;
-      }, 3000);
-    } else {
-      alert('No appointments to pay for.');
-    }
-  }
 
 }

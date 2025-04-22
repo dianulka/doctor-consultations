@@ -3,6 +3,8 @@ import { Firestore, collection, doc, addDoc, deleteDoc, updateDoc, getDocs, quer
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Appointment } from '../../models/appointment';
+import { concatMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +17,7 @@ export class ScheduleFirebaseService {
     this.appointmentsCollection = collection(this.firestore, 'appointments');
   }
 
-  /**
-   * Pobierz wszystkie wizyty
-   */
+
   getAllAppointments(): Observable<Appointment[]> {
     return from(getDocs(this.appointmentsCollection)).pipe(
       map((snapshot) =>
@@ -29,9 +29,6 @@ export class ScheduleFirebaseService {
     );
   }
 
-  /**
-   * Pobierz wizyty dla konkretnego pacjenta
-   */
   getAppointmentsForPatient(patientId: string): Observable<Appointment[]> {
     const q = query(this.appointmentsCollection, where('patient_id', '==', patientId));
     return from(getDocs(q)).pipe(
@@ -44,9 +41,7 @@ export class ScheduleFirebaseService {
     );
   }
 
-  /**
-   * Subskrybuj wizyty w czasie rzeczywistym
-   */
+  
   getAppointmentsRealtime(): Observable<Appointment[]> {
     return new Observable((observer) => {
       const unsubscribe = onSnapshot(this.appointmentsCollection, (snapshot) => {
@@ -57,14 +52,28 @@ export class ScheduleFirebaseService {
         observer.next(appointments);
       });
 
-      // Zwróć funkcję czyszczącą subskrypcję
       return { unsubscribe };
     });
   }
 
-  /**
-   * Pobierz wizyty dla konkretnego lekarza
-   */
+
+getAppointmentsRealtimeForDoctor(doctorId: string): Observable<Appointment[]> {
+  return new Observable((observer) => {
+    const q = query(this.appointmentsCollection, where('doctor_id', '==', doctorId));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const appointments = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      } as Appointment));
+      observer.next(appointments);
+    });
+
+    return { unsubscribe };
+  });
+}
+
+
   getAppointmentsForDoctor(doctorId: string): Observable<Appointment[]> {
     const q = query(this.appointmentsCollection, where('doctor_id', '==', doctorId));
     return from(getDocs(q)).pipe(
@@ -77,47 +86,39 @@ export class ScheduleFirebaseService {
     );
   }
 
-  /**
-   * Dodaj nową wizytę
-   */
+
   addAppointment(appointment: Appointment): Observable<void> {
     return from(addDoc(this.appointmentsCollection, appointment)).pipe(
-      map(() => {
+      concatMap(() => {
         console.log('Appointment added successfully.');
+        return of(void 0);
       })
     );
   }
 
-  /**
-   * Zaktualizuj wizytę
-   */
   updateAppointment(appointmentId: string, updatedData: Partial<Appointment>): Observable<void> {
     const appointmentDoc = doc(this.firestore, `appointments/${appointmentId}`);
     return from(updateDoc(appointmentDoc, updatedData)).pipe(
       map(() => {
+        console.log(appointmentDoc);
         console.log('Appointment updated successfully.');
       })
     );
   }
 
-  /**
-   * Usuń wizytę
-   */
+
   removeAppointment(appointmentId: string): Observable<boolean> {
     const appointmentDoc = doc(this.firestore, `appointments/${appointmentId}`);
     return from(deleteDoc(appointmentDoc)).pipe(
       map(() => {
-        console.log('Appointment removed successfully.');
+        console.log(`Appointment ${appointmentId} removed successfully.`);
         return true;
       }),
-      // Jeśli usuwanie nie powiedzie się, złap błąd
       map(() => false)
     );
   }
+  
 
-  /**
-   * Sprawdź konflikty w wizytach dla konkretnego dnia i przedziału czasowego
-   */
   checkConflicts(date: string, startTime: string, endTime: string, doctorId: string): Observable<boolean> {
     const q = query(
       this.appointmentsCollection,
@@ -141,9 +142,7 @@ export class ScheduleFirebaseService {
     );
   }
 
-  /**
-   * Konwertuj czas w formacie HH:mm na minuty
-   */
+  
   private timeToMinutes(time: string): number {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;

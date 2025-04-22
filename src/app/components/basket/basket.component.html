@@ -1,30 +1,23 @@
 <div class="basket-container">
-    <h1>Your Appointments</h1>
-  
-    <!-- Jeśli lista wizyt jest pusta -->
-    <div *ngIf="patientAppointments.length === 0" class="empty-basket">
-      <p>You have no reserved consultations.</p>
-    </div>
-  
-    <!-- Lista wizyt -->
-    <div *ngIf="patientAppointments.length > 0" class="appointments-list">
-      <div *ngFor="let appointment of patientAppointments" class="appointment-item">
-        <h3>{{ appointment.type }}</h3>
-        <p>Date: {{ appointment.date }}</p>
-        <p>Time: {{ appointment.startTime }} - {{ appointment.endTime }}</p>
-        <p>Status: <strong>{{ appointment.status }}</strong></p>
-        <p>Bill: 100 zł</p>
-        <!-- <button class="remove-btn" (click)="removeAppointment(appointment.id, appointment.date)">
-          Remove
-        </button> -->
-      </div>
-    </div>
-  
-    <!-- Sekcja symulacji płatności -->
-    <div class="payment-section" *ngIf="patientAppointments.length > 0">
-      <h2>Simulate Payment</h2>
-      <button class="pay-btn" (click)="simulatePayment()">Pay for Appointments</button>
-      <p *ngIf="paymentSuccess" class="payment-success">Payment successful! Thank you.</p>
+  <h1>Your Appointments</h1>
+
+  <!-- Jeśli lista wizyt jest pusta -->
+  <div *ngIf="patientAppointments.length === 0" class="empty-basket">
+    <p>You have no reserved consultations.</p>
+  </div>
+
+  <!-- Lista wizyt -->
+  <div *ngIf="patientAppointments.length > 0" class="appointments-list">
+    <div *ngFor="let appointment of patientAppointments" class="appointment-item">
+      <h3>{{ appointment.type }}</h3>
+      <p>Date: {{ appointment.date }}</p>
+      <p>Time: {{ appointment.startTime }} - {{ appointment.endTime }}</p>
+      <p>Status: <strong>{{ appointment.status }}</strong></p>
     </div>
   </div>
-  
+
+  <!-- Przyciski -->
+  <div class="button-container">
+    <button class="btn btn-secondary" routerLink="/patient-dashboard">Back to Dashboard</button>
+  </div>
+</div>

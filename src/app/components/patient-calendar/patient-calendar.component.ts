@@ -4,15 +4,20 @@ import { CommonModule } from '@angular/common';
 import { Appointment } from '../../models/appointment';
 import { FormsModule } from '@angular/forms';
 
+import { AbsenceFirebaseService } from '../../services/firebase/absence-firebase.service';
+import { AvailabilityFirebaseService } from '../../services/firebase/availability-firebase.service';
+import { ScheduleFirebaseService } from '../../services/firebase/schedule-firebase.service';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-patient-calendar',
   standalone: true,
-  imports: [CommonModule, BaseCalendarComponent, FormsModule],
+  imports: [CommonModule, BaseCalendarComponent, FormsModule, RouterModule],
   templateUrl: './patient-calendar.component.html',
   styleUrl: './patient-calendar.component.css'
 })
 export class PatientCalendarComponent extends BaseCalendarComponent {
-  patient_id:string = '1';
+  patientId:string = '1';
   reserveView: boolean = false; // Czy formularz rezerwacji jest widoczny
   selectedDateReserve: Date | null = null; // Wybrana data
   selectedStartTimeReserve: string | null = null; // Wybrany czas rozpoczęcia
@@ -21,6 +26,22 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
 
   hoveredAppointment: Appointment | null = null; // Szczegóły wizyty, na którą najechano
   showDialog: boolean = false; // Czy dialog jest widoczny
+
+  constructor(
+    protected override scheduleService: ScheduleFirebaseService,
+    protected override absenceService: AbsenceFirebaseService,
+    protected override availabilityService: AvailabilityFirebaseService,
+    protected override route: ActivatedRoute
+  ) {
+    super(scheduleService, absenceService, availabilityService, route);
+  
+    this.route.queryParams.subscribe((params) => {
+      this.doctorId = params['doctor_id'];
+      this.patientId = params['patient_id'];
+      console.log(`Patient ID: ${this.patientId}, Doctor ID: ${this.doctorId}`);
+    });
+  }
+  
 
   reserveAnAppointment() {
     
@@ -32,7 +53,7 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
     this.showDialog = false;
     this.resetForm();
   }
-  doctor_id = '0';
+  
   newAppointment: Appointment = {
     id: '',
     date: '',
@@ -40,8 +61,8 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
     endTime: '',
     type: '',
     status: 'reserved',
-    patient_id: this.patient_id, // Przykładowe ID pacjenta
-    doctor_id: this.doctor_id, // Zostanie ustawione na podstawie lekarza
+    patient_id: this.patientId,
+    doctor_id: this.doctorId,
     notes: '',
     patient_age: 0,
     patient_gender: '',
@@ -57,26 +78,20 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
       this.showDialog = true;
       this.newAppointment.date = day.toISOString().split('T')[0];
       this.newAppointment.startTime = time;
-          // Oblicz pozycję wybranego slotu w harmonogramie
       const slotIndex = this.hours.findIndex((slotTime) => slotTime === time);
 
-      // Ustaw dostępne długości konsultacji w zależności od wybranego slotu
       this.availableDurations = [];
       if (slotIndex === this.hours.length - 1 
       ) {
-        // Ostatni slot: tylko 30 minut dostępne
         this.availableDurations = [30];
       } else if (slotIndex === this.hours.length - 2
 
       ) {
-        // Przedostatni slot: 30 lub 60 minut dostępne
         this.availableDurations = [30, 60];
       } else {
-        // Wszystkie inne sloty: 30, 60, 90 minut dostępne
         this.availableDurations = [30, 60, 90];
       }
 
-      // Domyślnie ustaw pierwszy dostępny czas trwania
       this.appointmentDuration = this.availableDurations[0];
     }
   }
@@ -103,19 +118,17 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
       let [startHour, startMinute] = this.newAppointment.startTime.split(':').map(Number);
       console.log(startHour +' ' + startMinute);
       console.log(this.appointmentDuration);
-      // Oblicz godzinę zakończenia na podstawie wybranego czasu trwania
       let endTime = new Date();
       endTime.setHours(startHour, startMinute, 0, 0);
       console.log(endTime);
       if (this.appointmentDuration == 90) {
-        endTime.setMinutes(endTime.getMinutes() + 90); // Dodaj wybrany czas trwania w minutach
+        endTime.setMinutes(endTime.getMinutes() + 90); 
       } else if (this.appointmentDuration == 60) {
         endTime.setMinutes(endTime.getMinutes() + 60); 
       } else {
         endTime.setMinutes(endTime.getMinutes() + 30); 
       }
       console.log(endTime);
-      // Ustawienie `endTime` w formacie HH:mm
       const endHour = endTime.getHours().toString().padStart(2, '0');
       const endMinute = endTime.getMinutes().toString().padStart(2, '0');
       this.newAppointment.endTime = `${endHour}:${endMinute}`;
@@ -124,41 +137,7 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
     }
   }
   
-//  // Zapisz rezerwację
-//  submitReservation(): void {
-//   this.updateEndTime();
-//   console.log(this.newAppointment.endTime);
-//     // Sprawdź konflikt dla wybranego dnia i przedziału czasowego
-  
-//   if (!this.newAppointment.startTime || !this.newAppointment.endTime) {
-//     console.error('Invalid appointment time');
-//     return; // Zablokuj dodanie
-//   }
 
-//   if (this.newAppointment.startTime && this.newAppointment.date) {
-//     const day = new Date(this.newAppointment.date);
-//     // Appointment duration odjęłam 1 ale o chuj tu chodzi tak w ogole UWAGA!!!!
-//     console.log(this.appointmentDuration);
-//     const hasConflict = this.checkConflicts(day, this.newAppointment.startTime, this.appointmentDuration-1);
-
-//     if (hasConflict) {
-//       alert('Conflict detected: The selected slot overlaps with another appointment.');
-//       return; // Zatrzymaj proces rezerwacji
-//     }
-
-//     // Jeśli brak konfliktów, zapisz konsultację
-//     this.scheduleService
-//       .addAppointment(this.newAppointment.doctor_id, this.newAppointment.date, this.newAppointment)
-//       .subscribe(() => {
-//         alert('Appointment reserved successfully!');
-//         this.showDialog = false; // Ukryj dialog
-//         this.resetForm();
-//         this.loadAppointments(); // Odśwież harmonogram
-//       });
-//   }
-// }
-
- // Zapisanie rezerwacji
  submitReservation(): void {
   this.updateEndTime();
 
@@ -168,7 +147,7 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
   }
 
   const day = new Date(this.newAppointment.date);
-  const hasConflict = this.checkConflicts(day, this.newAppointment.startTime, this.appointmentDuration);
+  const hasConflict = this.checkConflicts(day, this.newAppointment.startTime, this.appointmentDuration-1);
 
   if (hasConflict) {
     alert('Conflict detected: The selected slot overlaps with another appointment.');
@@ -185,7 +164,6 @@ export class PatientCalendarComponent extends BaseCalendarComponent {
     });
 }
 
-// Resetuj formularz
 resetForm(): void {
   this.newAppointment = {
     id: '',
@@ -194,33 +172,42 @@ resetForm(): void {
     endTime: '',
     type: '',
     status: 'reserved',
-    patient_id: this.patient_id,
-    doctor_id: this.doctor_id,
+    patient_id: this.patientId,
+    doctor_id: this.doctorId,
     notes: '',
     patient_age: 0,
     patient_gender: '',
     patient_name: '',
   };
 }
-// Anulowanie wizyty
 cancelAppointment(): void {
-  if (this.hoveredAppointment && this.hoveredAppointment.patient_id === this.patient_id) {
+  if (this.hoveredAppointment && this.hoveredAppointment.patient_id === this.patientId) {
     if (confirm('Are you sure you want to cancel this appointment?')) {
       this.scheduleService
         .removeAppointment(this.hoveredAppointment.id!)
-        .subscribe((success) => {
-          if (success) {
-            alert('Appointment canceled successfully.');
-            this.loadAppointments();
-          } else {
+        .subscribe({
+          next: (success) => {
+            if (success) {
+              alert('Appointment canceled successfully.');
+              this.appointments = this.appointments.filter(
+                (appointment) => appointment.id !== this.hoveredAppointment?.id
+              );
+              this.hoveredAppointment = null;
+            } else {
+              alert('Failed to cancel the appointment.');
+            }
+          },
+          error: (err) => {
+            console.error('Error canceling appointment:', err);
             alert('Failed to cancel the appointment.');
-          }
+          },
         });
     }
   } else {
     alert('You can only cancel your own appointments.');
   }
 }
+
 
 // Nadpisanie `onHover` dla pacjenta
 override onHover(day: Date, time: string): void {

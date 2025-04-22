@@ -1,3 +1,57 @@
-<p>landing-page works! UR MOM !!!!!!</p>
-<button routerLink = "/login">Login</button>
-<button routerLink = "/register">Register</button>
+
+  
+<body>
+
+  <header class="navbar">
+    <div class="logo">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Service</a></li>
+        <li><a href="#">Contact</a></li>
+        <!-- <button (click)="viewDoctors()"> View doctors</button> -->
+      </ul>
+    </nav>
+    <div>
+    <button routerLink = "/login" class="login-button">Login</button>
+    <button routerLink = "/register" class="login-button">Register</button>
+</div>
+  </header>
+
+  <section class="hero">
+    
+    <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elementum eget vel, nunc nulla feugiat. Metus ut.</p>
+    <button class="appointment-button" routerLink="/doctors-list">See our specialists</button>
+    
+  </section>
+
+  <div class="service-card-container">
+    <div class="service-card">
+     
+      <h4>General Checkup</h4>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <a href="#" class="button">Learn More</a>
+    </div>
+    <div class="service-card">
+     
+      <h4>Pediatrics</h4>
+      <p>Comprehensive care for your little ones.</p>
+      <a href="#" class="button">Learn More</a>
+    </div>
+    <div class="service-card">
+      
+      <h4>Specialist Care</h4>
+      <p>Get access to top specialists in various fields.</p>
+      <a href="#" class="button">Learn More</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 Doctor Platform. All rights reserved.</p>
+  </footer>
+
+</body>

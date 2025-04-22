@@ -1,0 +1,21 @@
+<h1>Admin Panel</h1>
+<div class="admin-panel-container">
+    <h2>Welcome, {{ adminProfile?.firstName }} {{ adminProfile?.lastName }}</h2>
+    <p>You are logged in as an Admin.</p>
+  
+    <div class="admin-actions">
+      <button class="btn btn-primary" routerLink="/register-doctor">
+        Register a New Doctor
+      </button>
+      <button class="btn btn-secondary" (click)="logout()">Logout</button>
+    </div>
+
+    <div>
+        <h2>Choose Persistence Type</h2>
+        <button (click)="setPersistence('LOCAL')">Local (Default)</button>
+        <button (click)="setPersistence('SESSION')">Session</button>
+        <button (click)="setPersistence('NONE')">None</button>
+      </div>
+      
+  </div>
+  

@@ -7,11 +7,22 @@ import { PatientCalendarComponent } from './components/patient-calendar/patient-
 import { BasketComponent } from './components/basket/basket.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { AuthGuard } from './guards/auth.guard';
+import { PatientDashboardComponent } from './components/user/patient-dashboard/patient-dashboard.component';
+import { DoctorDashboardComponent } from './components/user/doctor-dashboard/doctor-dashboard.component';
+import { AdminPanelComponent } from './components/user/admin-panel/admin-panel.component';
+import { DoctorsListComponent } from './components/doctors-list/doctors-list.component';
+import { RegisterDoctorComponent } from './components/auth/register-doctor/register-doctor.component';
 export const routes: Routes = [
     { path: '', component: LandingPageComponent },
     { path: 'login', component: LoginComponent },
     {path: 'register', component: RegisterComponent},
-    {path: 'doctor', 
+    { path: 'patient-dashboard', component: PatientDashboardComponent, canActivate: [AuthGuard], data: { role: 'Patient' } },
+  { path: 'doctor-dashboard', component: DoctorDashboardComponent, canActivate: [AuthGuard], data: { role: 'Doctor' } },
+  { path: 'admin-panel', component: AdminPanelComponent, canActivate: [AuthGuard], data: { role: 'Admin' } },
+    {path: 'doctors-list', component: DoctorsListComponent},
+    { path: 'register-doctor', component: RegisterDoctorComponent, canActivate: [AuthGuard], data: { role: 'Admin' } },
+    {path: 'doctor', canActivate: [AuthGuard], data: { role: 'Doctor' },
         
     children: [
         { 
@@ -31,13 +42,11 @@ export const routes: Routes = [
 
     ]}, 
     { 
-        path: 'patient', 
+        path: 'patient', canActivate: [AuthGuard],
+        data: { role: 'Patient' },
         children: [
-        //   { path: 'dashboard', component: PatientDashboardComponent },
-        //   { path: 'appointments', component: PatientAppointmentsComponent },
-        //   { path: 'history', component: PatientHistoryComponent },
+       
           
-          // Nowy routing dla PatientCalendarComponent
           { 
             path: 'calendar', 
             component: PatientCalendarComponent 
@@ -49,5 +58,5 @@ export const routes: Routes = [
         ]
       },
     
-      { path: '**', redirectTo: '', pathMatch: 'full' }, // Fallback dla nieznanych ścieżek
+      { path: '**', redirectTo: '', pathMatch: 'full' }, 
 ];

@@ -1,48 +1,50 @@
 <div class="login-container">
-    <h2>Logowanie</h2>
-  
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <!-- Email -->
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          class="form-control"
-          formControlName="email"
-          placeholder="Wprowadź adres email"
-        />
-        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error">
-          Podaj poprawny adres email.
-        </div>
+  <!-- Back Button -->
+  <button class="back-button" routerLink="">&#8592; Back to Home</button>
+
+  <h2 class="login-title">Login</h2>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email" class="form-label">Email Address</label>
+      <input
+        id="email"
+        type="email"
+        class="form-control"
+        formControlName="email"
+        placeholder="Enter your email address"
+      />
+      <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error-message">
+        Please provide a valid email address.
       </div>
-  
-      <!-- Password -->
-      <div class="form-group">
-        <label for="password">Hasło</label>
-        <input
-          id="password"
-          type="password"
-          class="form-control"
-          formControlName="password"
-          placeholder="Wprowadź hasło"
-        />
-        <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
-          Hasło musi mieć co najmniej 6 znaków.
-        </div>
-      </div>
-  
-      <!-- Submit Button -->
-      <div class="form-group">
-        <button type="submit" class="btn btn-primary" [disabled]="isLoading || loginForm.invalid">
-          {{ isLoading ? 'Logowanie...' : 'Zaloguj się' }}
-        </button>
-      </div>
-    </form>
-  
-    <!-- Error Message -->
-    <div *ngIf="errorMessage" class="error">
-      {{ errorMessage }}
     </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <input
+        id="password"
+        type="password"
+        class="form-control"
+        formControlName="password"
+        placeholder="Enter your password"
+      />
+      <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error-message">
+        Password must be at least 6 characters long.
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-group">
+      <button type="submit" class="btn-submit" [disabled]="isLoading || loginForm.invalid">
+        {{ isLoading ? 'Logging in...' : 'Login' }}
+      </button>
+    </div>
+  </form>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
   </div>
-  
+</div>

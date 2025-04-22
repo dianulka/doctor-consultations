@@ -1,30 +1,30 @@
 
 export interface User {
-    id: string; // Unikalny identyfikator użytkownika
-    username: string; // Nazwa użytkownika/login
-    email: string; // Email użytkownika
-    role: 'Patient' | 'Doctor' | 'Admin'; // Rola użytkownika
-    profile: PatientProfile | DoctorProfile | AdminProfile | null; // Szczegóły profilu specyficzne dla roli
+    id: string;
+    username: string; 
+    email: string; 
+    role: 'Patient' | 'Doctor' | 'Admin'; 
+    profile: PatientProfile | DoctorProfile | AdminProfile | null; 
     
   }
 
 export interface PatientProfile {
-    firstName: string; // Imię
-    lastName: string; // Nazwisko
-    age: number; // Wiek
-    gender: 'Male' | 'Female' | 'Other'; // Płeć
+    firstName: string; 
+    lastName: string; 
+    age: number; 
+    gender: 'Male' | 'Female' | 'Other'; 
     
 }
 
 export interface DoctorProfile {
-    firstName: string; // Imię
-    lastName: string; // Nazwisko
-    specialization: string; // Specjalizacja (np. Kardiolog, Dermatolog)
+    firstName: string; 
+    lastName: string; 
+    specialization: string;
     
   }
 
 export interface AdminProfile {
-    firstName: string; // Imię
-    lastName: string; // Nazwisko
+    firstName: string; 
+    lastName: string;
 }
   

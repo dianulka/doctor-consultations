@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -23,6 +23,17 @@ export class LoginComponent {
     });
   }
 
+  ngOnInit() {
+    this.authService
+      .setPersistenceType('LOCAL')
+      .then(() => {
+        console.log('Persistence set to LOCAL');
+      })
+      .catch((error) => {
+        console.error('Failed to set persistence:', error);
+      });
+  }
+
   onSubmit() {
     if (this.loginForm.invalid) {
       return;
@@ -35,7 +46,7 @@ export class LoginComponent {
     this.authService.login(email, password).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/patient/calendar']);
+        
       },
       error: () => {
         this.isLoading = false;

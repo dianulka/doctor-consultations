@@ -1,78 +1,88 @@
+/* Basket Container */
 .basket-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .empty-basket {
-    text-align: center;
-    font-size: 18px;
-    color: gray;
-  }
-  
-  .appointments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .appointment-item {
-    border: 1px solid #ccc;
-    padding: 15px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-  }
-  
-  .appointment-item h3 {
-    margin: 0 0 10px;
-  }
-  
-  .appointment-item p {
-    margin: 5px 0;
-  }
-  
-  .remove-btn {
-    margin-top: 10px;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .remove-btn:hover {
-    background-color: #ff1a1a;
-  }
-  
-  .payment-section {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .pay-btn {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .pay-btn:hover {
-    background-color: #45a049;
-  }
-  
-  .payment-success {
-    margin-top: 15px;
-    color: green;
-    font-weight: bold;
-  }
-  
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Title */
+.basket-container h1 {
+  text-align: center;
+  color: #4caf50;
+  margin-bottom: 20px;
+}
+
+/* Empty Basket Message */
+.empty-basket {
+  text-align: center;
+  color: #666;
+  font-size: 1.2rem;
+  padding: 20px 0;
+}
+
+/* Appointments List */
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.appointment-item {
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.appointment-item:hover {
+  transform: translateY(-5px);
+}
+
+/* Appointment Title */
+.appointment-item h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Appointment Details */
+.appointment-item p {
+  color: #555;
+  font-size: 1rem;
+  margin: 5px 0;
+}
+
+.appointment-item strong {
+  color: #4caf50;
+}
+
+/* Button Container */
+.button-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* Button */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary {
+  background-color: #2196f3;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #1976d2;
+}

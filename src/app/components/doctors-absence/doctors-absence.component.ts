@@ -4,38 +4,50 @@ import { AbsenceService } from '../../services/absence.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AbsenceFirebaseService } from '../../services/firebase/absence-firebase.service';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-doctors-absence',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterModule],
   templateUrl: './doctors-absence.component.html',
   styleUrl: './doctors-absence.component.css'
 })
 export class DoctorsAbsenceComponent {
-  
-  newAbsence: Absence = { date: '', reason: '', doctor_id: '0' }; // Nowa nieobecność
-  absences: Absence[] = []; // Lista nieobecności
+  doctorId:string = '';
+  newAbsence: Absence = { date: '', reason: '', doctor_id: '99999' };
+  absences: Absence[] = [];
 
-  constructor(private absenceService: AbsenceFirebaseService) {}
+  constructor(private absenceService: AbsenceFirebaseService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.loadAbsences();
+    this.route.queryParams.subscribe((params) => {
+      this.doctorId = params['doctor_id']; // Pobieranie doctorId z queryParams
+      if (this.doctorId) {
+        console.log('Doctor absence id doctor: '+ this.doctorId);
+        //this.loadAvailabilities();
+        //this.loadAbsences();
+        //this.loadAppointments();
+        this.newAbsence.doctor_id = this.doctorId;
+        this.loadAbsences();
+      } else {
+        console.error('doctorId is missing in queryParams');
+      }
+    });
+    
   }
 
-  // Pobierz nieobecności
   loadAbsences(): void {
-    this.absenceService.getAbsences().subscribe((absences) => {
+    this.absenceService.getAbsencesRealTimeForDoctor(this.doctorId).subscribe((absences) => {
       this.absences = absences;
     });
   }
 
   
-  // Dodaj nieobecność
   addAbsence(): void {
     if (this.newAbsence.date) {
       this.absenceService.addAbsence(this.newAbsence).subscribe(() => {
-        this.loadAbsences(); // Odśwież listę nieobecności
-        this.newAbsence = { date: '', reason: '',doctor_id: '0' }; // Resetuj formularz
+        this.loadAbsences();
+        this.newAbsence = { date: '', reason: '',doctor_id: this.doctorId }; // Resetuj formularz
       });
     }
   }

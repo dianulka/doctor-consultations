@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 
-import { ScheduleService } from '../../services/schedule.service';
+
 import { Absence } from '../../models/absence';
 import { AbsenceService } from '../../services/absence.service';
 import { Availability } from '../../models/availability';
@@ -12,7 +12,7 @@ import { Appointment } from '../../models/appointment';
 import { AbsenceFirebaseService } from '../../services/firebase/absence-firebase.service';
 import { AvailabilityFirebaseService } from '../../services/firebase/availability-firebase.service';
 import { ScheduleFirebaseService } from '../../services/firebase/schedule-firebase.service';
-
+import { ActivatedRoute } from '@angular/router';
 
 export enum CalendarView {
   Week = 'week',
@@ -26,47 +26,76 @@ export enum CalendarView {
   styleUrl: './base-calendar.component.css'
 })
 export class BaseCalendarComponent {
-    viewDate: Date = new Date(); // Obecna data
+    viewDate: Date = new Date();
     selectedDate: Date | null = null;
     selectedStartTime: string | undefined;
-    hours: string[] = []; // Przechowuje sloty czasowe
-    monthDays: Date[] = []; // Przechowuje dni widoku
+    hours: string[] = []; 
+    monthDays: Date[] = [];
     public CalendarView = CalendarView;
   
     currentView: CalendarView = CalendarView.Week;
     absences: Absence[] = [];
     availabilities: Availability[] = [];
     appointments: Appointment[] = [];
+    doctorId: string = '';
     
 
-    constructor(protected scheduleService: ScheduleFirebaseService, private absenceService: AbsenceFirebaseService, private availabilityService: AvailabilityFirebaseService) {}
+    constructor(protected scheduleService: ScheduleFirebaseService,
+      protected absenceService: AbsenceFirebaseService, 
+      protected availabilityService: AvailabilityFirebaseService,
+      protected route: ActivatedRoute) {}
   
     ngOnInit(): void {
       this.generateTimeSlots();
       this.generateView(this.currentView, this.viewDate);
       
-      this.loadAvailabilities();
-      this.loadAbsences(); // Pobierz nieobecności
-      this.loadAppointments();
+      // this.loadAvailabilities();
+      // this.loadAbsences(); // Pobierz nieobecności
+      // this.loadAppointments();
+      this.route.queryParams.subscribe((params) => {
+        this.doctorId = params['doctor_id']; 
+        if (this.doctorId) {
+          this.loadAvailabilities();
+          this.loadAbsences();
+          this.loadAppointments();
+        } else {
+          console.error('doctorId is missing in queryParams');
+        }
+      });
     }
   
-    
-  
-  
-
     loadAppointments(): void {
-      this.scheduleService.getAllAppointments().subscribe((appointments) => {
+      this.scheduleService.getAppointmentsRealtimeForDoctor(this.doctorId).subscribe((appointments) => {
         this.appointments = appointments;
-        console.log(this.appointments);
-  
-        // Aktualizuj status wizyt na "canceled" w przypadku konfliktu z nieobecnością
-        this.absences.forEach((absence) => {
-          this.appointments.forEach((appointment) => {
-            if (appointment.date === absence.date) {
-              appointment.status = 'canceled';
-            }
-          });
-        });
+        this.updateAppointmentsWithAbsences();
+        console.log('Appointments updated in real-time2:', this.appointments);
+      });
+    }
+    
+    loadAbsences(): void {
+      this.absenceService.getAbsencesRealTimeForDoctor(this.doctorId).subscribe((absences) => {
+        this.absences = absences;
+        this.updateAppointmentsWithAbsences();
+        console.log('Absences updated in real-time:', this.absences);
+      });
+    }
+    
+    loadAvailabilities(): void {
+      this.availabilityService.getAvailabilitiesRealtimeForDoctor(this.doctorId).subscribe((availabilities) => {
+        this.availabilities = availabilities;
+        console.log('Availabilities updated in real-time:', this.availabilities);
+      });
+    }
+
+    updateAppointmentsWithAbsences(): void {
+      this.appointments.forEach((appointment) => {
+        const conflictingAbsence = this.absences.find(
+          (absence) => absence.date === appointment.date
+        );
+    
+        if (conflictingAbsence) {
+          appointment.status = 'canceled';
+        }
       });
     }
   
@@ -84,6 +113,8 @@ export class BaseCalendarComponent {
         );
       });
     }
+
+    // DLA KALENDARZA
   
     // Generowanie slotów czasowych co 30 minut
     generateTimeSlots(): void {
@@ -126,18 +157,16 @@ export class BaseCalendarComponent {
       }
     }
   
-    // Ustalanie początku tygodnia (poniedziałek)
     startOfWeek(date: Date): Date {
       const start = new Date(date);
       const day = start.getDay();
-      const diff = start.getDate() - day + (day === 0 ? -6 : 1); // Przesunięcie na poniedziałek
+      const diff = start.getDate() - day + (day === 0 ? -6 : 1); 
       return new Date(start.setDate(diff));
     }
   
   
     
 
-    // Sprawdza, czy slot (lub jego zakres) jest zarezerwowany
     isSlotReserved(day: Date, time: string, duration: number = 30): boolean {
       const dayKey = day.toISOString().split('T')[0];
       const startMinutes = this.timeToMinutes(time);
@@ -156,7 +185,6 @@ export class BaseCalendarComponent {
     }
 
   
-    // Sprawdza, czy slot jest przeszły
     isPastSlot(day: Date, time: string): boolean {
       const now = new Date();
       const slotDateTime = new Date(day);
@@ -165,14 +193,12 @@ export class BaseCalendarComponent {
       return slotDateTime < now;
     }
   
-    // Wybranie slotu
     selectSlot(day: Date, time: string): void {
       console.log(`Selected slot on ${day} at ${time}`);
       this.selectedDate = day;
       this.selectedStartTime = time;
     }
   
-    // Formatowanie daty do klucza harmonogramu
     formatDateKey(date: Date): string {
       return date.toISOString().split('T')[0];
     }
@@ -211,12 +237,12 @@ export class BaseCalendarComponent {
     }
   
     generateDayView(date: Date): void {
-      this.monthDays = [date]; // Ustaw jeden dzień jako widoczny
+      this.monthDays = [date]; 
     }
     
     switchToDayView(day: Date): void {
-      this.viewDate = day; // Ustaw wybraną datę jako bieżący widok
-      this.generateDayView(day); // Wygeneruj widok dla tego dnia
+      this.viewDate = day; 
+      this.generateDayView(day);
     }
   
     isCurrentSlot(day: Date, time: string): boolean {
@@ -225,7 +251,6 @@ export class BaseCalendarComponent {
       const [hour, minute] = time.split(':').map(Number);
       slotDate.setHours(hour, minute, 0, 0);
     
-      // Porównanie pełnej daty i czasu
       return slotDate.getTime() === now.setSeconds(0, 0);
     }
     
@@ -239,19 +264,16 @@ export class BaseCalendarComponent {
   
     isAvailable(day: Date, time: string): boolean {
       const dayKey = day.toISOString().split('T')[0];
-      const dayOfWeek = day.toLocaleDateString('en-US', { weekday: 'short' }); // Skrót dnia tygodnia (np. "Mon", "Tue")
+      const dayOfWeek = day.toLocaleDateString('en-US', { weekday: 'short' }); 
     
       return this.availabilities.some((availability) => {
-        // Sprawdź, czy data mieści się w zakresie dat dla cyklicznej dostępności
         const isInDateRange =
           (!availability.startDate || availability.startDate <= dayKey) &&
           (!availability.endDate || availability.endDate >= dayKey);
     
-        // Jeśli dostępność dotyczy konkretnych dni tygodnia, sprawdź je
         const isDayOfWeekAvailable =
           !availability.daysOfWeek || availability.daysOfWeek.includes(dayOfWeek);
     
-        // Sprawdź, czy czas mieści się w którymś z przedziałów czasowych
         const isTimeAvailable = availability.timeRanges.some((range) => {
           return time >= range.start && time < range.end;
         });
@@ -261,50 +283,33 @@ export class BaseCalendarComponent {
     }
     
     
-    loadAbsences(): void {
-      this.absenceService.getAbsences().subscribe((absences) => {
-        this.absences = absences;
-      });
-    }
-  
-    loadAvailabilities(): void {
-      this.availabilityService.getAvailabilities().subscribe((availabilities) => {
-        this.availabilities = availabilities;
-    }
-    
-    )
-    console.log(this.availabilities);
-  }
+   
   countAppointments(day: Date): number {
-    const dayKey = day.toISOString().split('T')[0]; // Konwertuj datę na format YYYY-MM-DD
+    const dayKey = day.toISOString().split('T')[0]; 
     return this.appointments.filter((appointment) => appointment.date === dayKey).length;
   }
 
   onHover(day: Date, time: string): void {
-    // Domyślna implementacja (może być pusta)
     console.log(`Hovered on ${day} at ${time} in base-calendar`);
   }
 
   onLeave(): void {
-    // Domyślna implementacja (może być pusta)
     console.log('Mouse left slot in base-calendar');
   }
 
   checkConflicts(day: Date, startTime: string, duration: number): boolean {
-    const dayKey = day.toISOString().split('T')[0]; // Konwertuj datę na format YYYY-MM-DD
-    const startMinutes = this.timeToMinutes(startTime); // Konwertuj czas rozpoczęcia na minuty
-    const endMinutes = startMinutes + duration; // Oblicz czas zakończenia
+    const dayKey = day.toISOString().split('T')[0];
+    const startMinutes = this.timeToMinutes(startTime); 
+    const endMinutes = startMinutes + duration;
   
-    // Sprawdź, czy istnieje konflikt z innymi wizytami w danym dniu
     return this.appointments.some((appointment) => {
       if (appointment.date !== dayKey || appointment.status !== 'reserved') {
-        return false; // Ignoruj wizyty z innej daty lub o innym statusie
+        return false; 
       }
   
-      const appointmentStart = this.timeToMinutes(appointment.startTime); // Początek wizyty w minutach
-      const appointmentEnd = this.timeToMinutes(appointment.endTime); // Koniec wizyty w minutach
+      const appointmentStart = this.timeToMinutes(appointment.startTime);
+      const appointmentEnd = this.timeToMinutes(appointment.endTime); 
   
-      // Sprawdź, czy przedziały czasowe się pokrywają
       return startMinutes < appointmentEnd && endMinutes > appointmentStart;
     });
   }

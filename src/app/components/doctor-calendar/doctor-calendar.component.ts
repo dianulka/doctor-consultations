@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Appointment, } from '../../models/appointment';
-import { ScheduleService } from '../../services/schedule.service';
+//import { ScheduleService } from '../../services/schedule.service';
 import { Absence } from '../../models/absence';
 import { AbsenceService } from '../../services/absence.service';
 import { Availability } from '../../models/availability';
 import { BaseCalendarComponent } from '../base-calendar/base-calendar.component';
 import { ScheduleFirebaseService } from '../../services/firebase/schedule-firebase.service';
+import { RouterModule } from '@angular/router';
 
 export enum CalendarView {
   Week = 'week',
@@ -18,7 +19,7 @@ export enum CalendarView {
   standalone: true,
   templateUrl: './doctor-calendar.component.html',
   styleUrls: ['./doctor-calendar.component.css'],
-  imports: [CommonModule, BaseCalendarComponent]
+  imports: [CommonModule, BaseCalendarComponent,RouterModule]
 })
 export class DoctorCalendarComponent extends BaseCalendarComponent {
   
@@ -46,6 +47,19 @@ export class DoctorCalendarComponent extends BaseCalendarComponent {
   override onLeave(): void {
     this.hoveredAppointment = null;
   }
+
+  detailsPosition = { x: 0, y: 0 }; // Pozycja dla okna szczegółów
+
+  showDetails(event: MouseEvent, day: Date, time: string): void {
+    this.onHover(day, time); // Wywołanie oryginalnej metody onHover
+    this.detailsPosition = { x: event.pageX + 10, y: event.pageY + 10 }; // Ustawienie pozycji okna
+  }
+
+  hideDetails(): void {
+    this.hoveredAppointment = null; // Ukrycie szczegółów
+  }
+
+  
 
   
   

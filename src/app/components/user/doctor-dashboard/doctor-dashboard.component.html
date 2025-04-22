@@ -1,0 +1,19 @@
+<div class="dashboard-container" *ngIf="doctorData && doctorProfile; else loading">
+  <div class="dashboard-header">
+    <h2>Welcome, Dr. {{ doctorProfile.firstName }} {{ doctorProfile.lastName }}</h2>
+    <p class="specialization">Specialization: {{ doctorProfile.specialization }}</p>
+  </div>
+
+  <div class="dashboard-buttons">
+    <button class="dashboard-button" (click)="viewCalendar()">View Calendar</button>
+    <button class="dashboard-button" (click)="manageAvailability()">Manage Availability</button>
+    <button class="dashboard-button" (click)="manageAbsence()">Manage Absences</button>
+    <button class="logout-button" (click)="logout()">Logout</button>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-container">
+    <p>Loading doctor information...</p>
+  </div>
+</ng-template>
