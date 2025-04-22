@@ -1,6 +1,17 @@
-# DoctorConsultations
+# ``` DoctorConsultations```
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.12.
+A web application for managing medical consultations, built with Angular 18.2.12 and backed by Firebase. It allows patients to book appointments, doctors to manage their availability and absence, and admins to oversee the system.
+
+## Features
+
+-  **Authentication** via Firebase (registration and login)
+-  **Three user roles**:
+    - **Patient** – can browse doctor calendars and book available appointments
+    - **Doctor** – can manage their personal calendar, add available times, and mark absences
+    - **Admin** – can add new doctors to the system
+-  **Calendar-based interface** for booking and managing availability
+-  **Real-time data** synchronization with Firebase Firestore
+
 
 ## Development server
 
